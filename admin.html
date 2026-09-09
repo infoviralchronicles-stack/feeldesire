@@ -445,29 +445,27 @@ IMPORTANT: DO NOT include the current year (like ) in the title or the content o
  </footer>
  <script src="script.js"><\\/script>
 </body>
-</html>\`;
+</html>`;
  }
 
  function updateIndexHtml(indexContent, data, slug, dateStr, imageUrl) {
- const cardHtml = \`
- <article class="post-card">
- <a href="\${slug}.html" class="post-img-wrapper"><img src="\${imageUrl}" alt="\${data.category}"></a>
- <div class="post-content">
- <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
- <a href="\${slug}.html"><h3 class="post-title">\${data.title}</h3></a>
- <div class="post-meta">By AI Editor • \${dateStr}</div>
- <p class="post-excerpt">\${data.excerpt}</p>
- </div>
- </article>
- <!-- NEW_ARTICLE_ANCHOR -->\`;
+ const cardHtml = `<!-- NEW_ARTICLE_ANCHOR -->
+            <article class="post-card">
+              <a href="${slug}.html" class="post-img-wrapper"><img src="${imageUrl}"></a>
+              <div class="post-content">
+                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+                <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
+                <div class="post-meta">By AI Editor • ${dateStr}</div>
+                <p class="post-excerpt">${data.excerpt}</p>
+              </div>
+            </article>`;
 
- const trendingHtml = \`
- <li>
- <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
- <a href="\${slug}.html" class="trending-title">\${data.title}</a>
- <span class="post-meta">Just now</span>
- </li>
- <!-- NEW_TRENDING_ANCHOR -->\`;
+ const trendingHtml = `<!-- NEW_TRENDING_ANCHOR -->
+            <li>
+              <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+              <a href="${slug}.html" class="trending-title">${data.title}</a>
+              <span class="post-meta">Just now</span>
+            </li>`;
  
  let newContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
  return newContent.replace('<!-- NEW_TRENDING_ANCHOR -->', trendingHtml);
