@@ -31,7 +31,7 @@ Return ONLY a valid JSON object with the following keys, no markdown wrappers:
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: prompt,
             config: { responseMimeType: "application/json" }
         });
@@ -185,3 +185,4 @@ Return ONLY a valid JSON object with the following keys, no markdown wrappers:
 }
 
 publish();
+
