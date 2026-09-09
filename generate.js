@@ -1,0 +1,143 @@
+const fs = require('fs');
+
+let indexContent = fs.readFileSync('index.html', 'utf8');
+
+function slugify(text) {
+  return text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '') + '.html';
+}
+
+const template = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} - FeelDesire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <a href="index.html" class="logo">Feel<span>Desire</span></a>
+        
+        <div class="search-bar">
+          <input type="text" placeholder="Search articles...">
+          <button type="submit">Search</button>
+        </div>
+        
+        <button class="mobile-menu-btn" aria-label="Toggle Navigation">&#9776;</button>
+      </div>
+    </div>
+    
+    <nav class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="#">Lifestyle</a></li>
+          <li><a href="#">Entertainment</a></li>
+          <li><a href="#">Technology</a></li>
+          <li><a href="#">Health</a></li>
+          <li><a href="#">Travel</a></li>
+          <li><a href="#">Business</a></li>
+          <li><a href="#">Fashion</a></li>
+          <li><a href="#">Food</a></li>
+          <li><a href="#">Trending News</a></li>
+        </ul>
+      </nav>
+  </header>
+
+  <main class="container">
+    
+    <article>
+      <header class="article-header">
+        <a href="#" class="post-category">News</a>
+        <h1 class="article-title">{title}</h1>
+        <div class="article-meta">
+          By <a href="#"><strong>Editorial Team</strong></a> | September 9, 2026 | 5 min read
+        </div>
+      </header>
+
+      <div class="article-featured-image">
+        <img src="https://images.unsplash.com/photo-1512413914421-eb4232c2af36?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Article Image">
+      </div>
+
+      <div class="article-body">
+        <p>This is a generated placeholder article for <strong>{title}</strong>. In a real dynamic website, this content would be fetched from a database or CMS based on the URL slug.</p>
+        
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        
+        <blockquote>
+          "Inspirational quote related to the article topic."
+        </blockquote>
+
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+      </div>
+    </article>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <a href="index.html" class="logo footer-logo">Feel<span>Desire</span></a>
+          <p class="footer-desc">Your daily source for lifestyle, entertainment, tech, and health news. Stay inspired, stay informed.</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#">Lifestyle</a></li>
+            <li><a href="#">Technology</a></li>
+            <li><a href="#">Health</a></li>
+            <li><a href="#">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">About Us</h4>
+          <ul class="footer-links">
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Advertise</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FeelDesire. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>`;
+
+// Replace standard cards
+indexContent = indexContent.replace(/<article class="post-card">([\s\S]*?)<\/article>/g, (match) => {
+  const titleMatch = match.match(/<h3 class="post-title">([^<]+)<\/h3>/);
+  if (titleMatch) {
+    const title = titleMatch[1];
+    const slug = slugify(title);
+    fs.writeFileSync(slug, template.replace(/\{title\}/g, title));
+    return match.replace(/href="[^"]*\.html"/g, 'href="' + slug + '"');
+  }
+  return match;
+});
+
+// Replace trending list
+indexContent = indexContent.replace(/<li>\s*<a href="#" class="post-category">[\s\S]*?<\/li>/g, (match) => {
+  const titleMatch = match.match(/class="trending-title">([^<]+)<\/a>/);
+  if (titleMatch) {
+    const title = titleMatch[1];
+    const slug = slugify(title);
+    fs.writeFileSync(slug, template.replace(/\{title\}/g, title));
+    return match.replace(/href="[^"]*\.html"/g, 'href="' + slug + '"');
+  }
+  return match;
+});
+
+fs.writeFileSync('index.html', indexContent);
+console.log("Pages generated and index.html updated.");
