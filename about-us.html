@@ -1,19 +1,9 @@
-const fs = require('fs');
-
-const pages = [
-  { slug: 'about-us.html', title: 'About Us', content: '<p>Welcome to FeelDesire. We are a modern digital magazine dedicated to bringing you the latest in lifestyle, technology, and culture.</p>' },
-  { slug: 'our-story.html', title: 'Our Story', content: '<p>FeelDesire started with a simple idea: to curate the best stories from around the globe. Our journey began in 2026, and we have been growing ever since.</p>' },
-  { slug: 'contact.html', title: 'Contact Us', content: '<p>Have a question or feedback? We would love to hear from you.</p><form><input type="text" placeholder="Name" style="width:100%; padding:10px; margin-bottom:10px;" required><input type="email" placeholder="Email" style="width:100%; padding:10px; margin-bottom:10px;" required><textarea placeholder="Message" style="width:100%; padding:10px; margin-bottom:10px; min-height:100px;" required></textarea><button type="submit" style="background:#c0392b; color:white; padding:10px 20px; border:none; cursor:pointer;">Send Message</button></form>' },
-  { slug: 'advertise.html', title: 'Advertise', content: '<p>Partner with FeelDesire to reach millions of engaged readers. Contact our advertising team for rates and media kits.</p>' },
-  { slug: 'privacy-policy.html', title: 'Privacy Policy', content: '<p>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal data when you visit FeelDesire.</p>' }
-];
-
-const template = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title} - FeelDesire</title>
+  <title>About Us - FeelDesire</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -50,9 +40,9 @@ const template = `<!DOCTYPE html>
 
   <main class="container" style="padding: 60px 0;">
     <div style="max-width: 800px; margin: 0 auto;">
-      <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #c0392b; padding-bottom: 10px;">{title}</h1>
+      <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #c0392b; padding-bottom: 10px;">About Us</h1>
       <div style="font-size: 1.1rem; line-height: 1.8; color: #444;">
-        {content}
+        <p>Welcome to FeelDesire. We are a modern digital magazine dedicated to bringing you the latest in lifestyle, technology, and culture.</p>
       </div>
     </div>
   </main>
@@ -91,22 +81,4 @@ const template = `<!DOCTYPE html>
   </footer>
   <script src="script.js"></script>
 </body>
-</html>`;
-
-pages.forEach(p => {
-  const html = template.replace(/\{title\}/g, p.title).replace('{content}', p.content);
-  fs.writeFileSync(p.slug, html);
-});
-
-const files = fs.readdirSync('.').filter(f => f.endsWith('.html'));
-files.forEach(f => {
-  let content = fs.readFileSync(f, 'utf8');
-  content = content.replace(/<li><a href="#">About Us<\/a><\/li>/g, '<li><a href="about-us.html">About Us</a></li>');
-  content = content.replace(/<li><a href="#">Our Story<\/a><\/li>/g, '<li><a href="our-story.html">Our Story</a></li>');
-  content = content.replace(/<li><a href="#">Contact<\/a><\/li>/g, '<li><a href="contact.html">Contact</a></li>');
-  content = content.replace(/<li><a href="#">Advertise<\/a><\/li>/g, '<li><a href="advertise.html">Advertise</a></li>');
-  content = content.replace(/<li><a href="#">Privacy Policy<\/a><\/li>/g, '<li><a href="privacy-policy.html">Privacy Policy</a></li>');
-  fs.writeFileSync(f, content);
-});
-
-console.log("Static pages generated and footer links updated across all HTML files.");
+</html>
