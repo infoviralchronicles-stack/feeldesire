@@ -46,7 +46,7 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
 {"title": "Catchy title", "category": "${cat}", "excerpt": "1 sentence summary", "htmlContent": "HTML body (<p>, <h2>) without html/body tags"}`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: prompt,
             config: { responseMimeType: "application/json" }
         });
@@ -138,5 +138,6 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
 }
 
 generateAndPublish();
+
 
 
