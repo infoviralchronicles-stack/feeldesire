@@ -53,8 +53,6 @@ img {
 header {
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-light);
-  position: sticky;
-  top: 0;
   z-index: 100;
 }
 
