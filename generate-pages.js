@@ -1,0 +1,116 @@
+const fs = require('fs');
+
+// Pages to create
+const pages = [
+  { slug: 'about-us.html', title: 'About Us', content: '<p>Welcome to FeelDesire. We are a modern digital magazine dedicated to bringing you the latest in lifestyle, technology, and culture.</p>' },
+  { slug: 'our-story.html', title: 'Our Story', content: '<p>FeelDesire started with a simple idea: to curate the best stories from around the globe. Our journey began in 2026, and we have been growing ever since.</p>' },
+  { slug: 'contact.html', title: 'Contact Us', content: '<p>Have a question or feedback? We would love to hear from you.</p><form><input type="text" placeholder="Name" style="width:100%; padding:10px; margin-bottom:10px;" required><input type="email" placeholder="Email" style="width:100%; padding:10px; margin-bottom:10px;" required><textarea placeholder="Message" style="width:100%; padding:10px; margin-bottom:10px; min-height:100px;" required></textarea><button type="submit" style="background:#c0392b; color:white; padding:10px 20px; border:none; cursor:pointer;">Send Message</button></form>' },
+  { slug: 'advertise.html', title: 'Advertise', content: '<p>Partner with FeelDesire to reach millions of engaged readers. Contact our advertising team for rates and media kits.</p>' },
+  { slug: 'privacy-policy.html', title: 'Privacy Policy', content: '<p>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal data when you visit FeelDesire.</p>' }
+];
+
+const template = <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} - FeelDesire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <a href="index.html" class="logo">Feel<span>Desire</span></a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search articles...">
+          <button type="submit">Search</button>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Toggle Navigation">&#9776;</button>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="#">Lifestyle</a></li>
+          <li><a href="#">Entertainment</a></li>
+          <li><a href="#">Technology</a></li>
+          <li><a href="#">Health</a></li>
+          <li><a href="#">Travel</a></li>
+          <li><a href="#">Business</a></li>
+          <li><a href="#">Fashion</a></li>
+          <li><a href="#">Food</a></li>
+          <li><a href="#">Trending News</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding: 60px 0;">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #c0392b; padding-bottom: 10px;">{title}</h1>
+      <div style="font-size: 1.1rem; line-height: 1.8; color: #444;">
+        {content}
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <a href="index.html" class="logo footer-logo">Feel<span>Desire</span></a>
+          <p class="footer-desc">Your daily source for lifestyle, entertainment, tech, and health news. Stay inspired, stay informed.</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#">Lifestyle</a></li>
+            <li><a href="#">Technology</a></li>
+            <li><a href="#">Health</a></li>
+            <li><a href="#">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">About Us</h4>
+          <ul class="footer-links">
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="our-story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="advertise.html">Advertise</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FeelDesire. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>;
+
+// Create the 5 pages
+pages.forEach(p => {
+  const html = template.replace(/\{title\}/g, p.title).replace('{content}', p.content);
+  fs.writeFileSync(p.slug, html);
+});
+
+// Update links in index.html and all generated html files
+const files = fs.readdirSync('.').filter(f => f.endsWith('.html'));
+files.forEach(f => {
+  let content = fs.readFileSync(f, 'utf8');
+  // Replace old footer links with new ones
+  content = content.replace(/<li><a href="#">About Us<\/a><\/li>/g, '<li><a href="about-us.html">About Us</a></li>');
+  content = content.replace(/<li><a href="#">Our Story<\/a><\/li>/g, '<li><a href="our-story.html">Our Story</a></li>');
+  content = content.replace(/<li><a href="#">Contact<\/a><\/li>/g, '<li><a href="contact.html">Contact</a></li>');
+  content = content.replace(/<li><a href="#">Advertise<\/a><\/li>/g, '<li><a href="advertise.html">Advertise</a></li>');
+  content = content.replace(/<li><a href="#">Privacy Policy<\/a><\/li>/g, '<li><a href="privacy-policy.html">Privacy Policy</a></li>');
+  fs.writeFileSync(f, content);
+});
+
+console.log("Static pages generated and footer links updated across all HTML files.");
