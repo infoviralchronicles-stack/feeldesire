@@ -3,63 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FeelDesire Online Admin Panel</title>
+  <title>FeelDesire CMS (Mini WordPress)</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 40px 10px; margin: 0; }
-    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; width: 100%; }
     h1 { color: #2c3e50; font-size: 26px; margin-bottom: 5px; text-align: center; }
     p.subtitle { color: #7f8c8d; margin-bottom: 30px; font-size: 15px; text-align: center; }
     
+    .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 25px; }
+    .tab { flex: 1; text-align: center; padding: 15px; cursor: pointer; font-weight: 600; color: #7f8c8d; transition: all 0.3s; }
+    .tab:hover { background: #f9f9f9; }
+    .tab.active { color: #e74c3c; border-bottom: 2px solid #e74c3c; margin-bottom: -2px; }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     .form-group { margin-bottom: 20px; }
     label { display: block; font-weight: 600; margin-bottom: 8px; color: #34495e; font-size: 14px; }
-    input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; font-size: 15px; box-sizing: border-box; outline: none; transition: border 0.3s; }
-    input:focus { border-color: #3498db; }
+    input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; font-size: 15px; box-sizing: border-box; outline: none; transition: border 0.3s; }
+    input:focus, select:focus { border-color: #3498db; }
     .help-text { font-size: 12px; color: #7f8c8d; margin-top: 5px; display: block; }
     
     button { width: 100%; padding: 15px; background-color: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
     button:hover { background-color: #c0392b; }
     button:disabled { background-color: #95a5a6; cursor: not-allowed; }
     
+    #editor-container { height: 300px; margin-bottom: 20px; border-radius: 0 0 8px 8px; }
+    
     #log { margin-top: 25px; padding: 15px; background: #2c3e50; color: #2ecc71; border-radius: 8px; font-family: monospace; font-size: 13px; height: 150px; overflow-y: auto; display: none; }
     .error-log { color: #e74c3c !important; }
+
+    .global-keys { background: #ecf0f1; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Online Publisher</h1>
-    <p class="subtitle">Enter keyword, let AI write it, and push directly to your live website.</p>
+    <h1>FeelDesire CMS</h1>
+    <p class="subtitle">Your Mini-WordPress. Publish new AI articles or edit existing ones.</p>
 
-    <div class="form-group">
-      <label>Google Gemini API Key</label>
-      <input type="password" id="geminiKey" placeholder="AIzaSy...">
-      <span class="help-text">Your free API key from Google AI Studio. (Saved in browser)</span>
+    <!-- Global API Keys -->
+    <div class="global-keys">
+      <div class="form-group" style="margin-bottom: 10px;">
+        <label>GitHub Personal Access Token (Required for all actions)</label>
+        <input type="password" id="githubToken" placeholder="ghp_...">
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Google Gemini API Key (Required for AI Publish)</label>
+        <input type="password" id="geminiKey" placeholder="AIzaSy...">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>GitHub Personal Access Token (Classic)</label>
-      <input type="password" id="githubToken" placeholder="ghp_...">
-      <span class="help-text">Requires 'repo' scope to push files to your website. (Saved in browser)</span>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('publishTab', this)">✨ AI Auto-Publish</div>
+      <div class="tab" onclick="switchTab('editTab', this); loadArticlesList();">✏️ Edit Articles</div>
     </div>
 
-    <div class="form-group">
-      <label>Article Keyword or Topic</label>
-      <input type="text" id="keyword" placeholder="e.g. Best Smartphones of 2026">
+    <!-- AI Publish Tab -->
+    <div id="publishTab" class="tab-content active">
+      <div class="form-group">
+        <label>Article Keyword or Topic</label>
+        <input type="text" id="keyword" placeholder="e.g. Best Smartphones of 2026">
+      </div>
+      <button id="publishBtn" onclick="startPublishing()">Auto Generate & Publish</button>
     </div>
 
-    <button id="publishBtn" onclick="startPublishing()">Auto Generate & Publish</button>
+    <!-- Edit Article Tab -->
+    <div id="editTab" class="tab-content">
+      <div class="form-group">
+        <label>Select Article to Edit</label>
+        <select id="articleSelect" onchange="loadArticleContent()">
+          <option value="">-- Select an Article --</option>
+        </select>
+        <button id="loadBtn" onclick="loadArticlesList()" style="width: auto; padding: 8px 15px; margin-top: 10px; background: #34495e;">↻ Refresh List</button>
+      </div>
+
+      <div id="editArea" style="display: none; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <div class="form-group">
+          <label>Article Title</label>
+          <input type="text" id="editTitle">
+        </div>
+        <div class="form-group">
+          <label>Article Content</label>
+          <div id="editor-container"></div>
+        </div>
+        <button id="updateBtn" onclick="saveEditedArticle()">Update Article</button>
+      </div>
+    </div>
 
     <div id="log"></div>
   </div>
 
+  <!-- Quill JS -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
   <script>
+    // Initialize Quill Editor
+    var quill = new Quill('#editor-container', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          ['link', 'blockquote', 'image', 'video'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+        ]
+      }
+    });
+
     // Load saved keys
     document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
     document.getElementById('githubToken').value = localStorage.getItem('githubToken') || '';
 
     const REPO_OWNER = 'infoviralchronicles-stack';
     const REPO_NAME = 'feeldesire';
+
+    // Current Editing State
+    let currentEditingFileSha = null;
+    let currentEditingFileName = null;
+    let currentOriginalHtml = null;
+
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
 
     function logMessage(msg, isError = false) {
       const logDiv = document.getElementById('log');
@@ -68,57 +139,55 @@
       logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    async function startPublishing() {
+    function getKeys() {
       const geminiKey = document.getElementById('geminiKey').value.trim();
       const githubToken = document.getElementById('githubToken').value.trim();
+      localStorage.setItem('geminiKey', geminiKey);
+      localStorage.setItem('githubToken', githubToken);
+      return { geminiKey, githubToken };
+    }
+
+    // --- AI PUBLISH LOGIC ---
+    async function startPublishing() {
+      const { geminiKey, githubToken } = getKeys();
       const keyword = document.getElementById('keyword').value.trim();
       const btn = document.getElementById('publishBtn');
 
       if (!geminiKey || !githubToken || !keyword) {
-        alert("Please fill all fields!");
+        alert("Please fill API keys and keyword!");
         return;
       }
-
-      // Save keys for next time
-      localStorage.setItem('geminiKey', geminiKey);
-      localStorage.setItem('githubToken', githubToken);
 
       btn.disabled = true;
       btn.innerText = "Publishing... (Do not close tab)";
       document.getElementById('log').innerHTML = '';
-      document.getElementById('log').style.display = 'none';
-
+      
       try {
         logMessage("Starting AI generation for: " + keyword);
         const articleData = await generateArticle(geminiKey, keyword);
-        logMessage("AI generated article successfully: " + articleData.title);
+        logMessage("AI generated article successfully.");
 
-        logMessage("Preparing HTML files...");
         const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const imageUrl = `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/1200/800`;
         
         const newHtml = createHTML(articleData, slug, dateStr, imageUrl);
         
-        logMessage("Fetching latest index.html from GitHub...");
+        logMessage("Fetching index.html from GitHub...");
         const indexFile = await getGitHubFile(githubToken, 'index.html');
         
-        logMessage("Injecting new article into index.html...");
         const newIndexContent = updateIndexHtml(indexFile.content, articleData, slug, dateStr, imageUrl);
 
-        logMessage("Committing new article page to GitHub...");
+        logMessage("Saving article to GitHub...");
         await uploadToGitHub(githubToken, `${slug}.html`, newHtml, `Publish: ${articleData.title}`);
 
-        logMessage("Committing updated index.html to GitHub...");
+        logMessage("Updating index.html on GitHub...");
         await uploadToGitHub(githubToken, 'index.html', newIndexContent, `Update index for: ${articleData.title}`, indexFile.sha);
 
         logMessage("✅ Success! Your article is published.");
-        logMessage("Vercel is now building your site. It will be live in 1-2 minutes.");
         document.getElementById('keyword').value = '';
-
       } catch (err) {
         logMessage(err.message, true);
-        console.error(err);
       } finally {
         btn.disabled = false;
         btn.innerText = "Auto Generate & Publish";
@@ -128,71 +197,142 @@
     async function generateArticle(apiKey, keyword) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
-Return ONLY a valid JSON object (no markdown formatting, no backticks) with these keys:
-{
-  "title": "A catchy title",
-  "category": "One of: Lifestyle, Entertainment, Technology, Health, Travel, Business, Fashion, Food, Trending News",
-  "excerpt": "A 1-2 sentence summary.",
-  "htmlContent": "Main article content in HTML tags (<p>, <h2>, etc). No <html> or <body> tags."
-}`;
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
-      });
-
+Return ONLY a valid JSON object (no markdown formatting) with these keys:
+{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body without html/body tags"}`;
+      const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
       if (!response.ok) throw new Error("Gemini API Error: " + response.statusText);
       const data = await response.json();
-      let text = data.candidates[0].content.parts[0].text;
-      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
       return JSON.parse(text);
     }
 
+    // --- EDIT ARTICLES LOGIC ---
+    async function loadArticlesList() {
+      const { githubToken } = getKeys();
+      if (!githubToken) return;
+
+      logMessage("Fetching list of articles...");
+      const select = document.getElementById('articleSelect');
+      select.innerHTML = '<option value="">Loading...</option>';
+
+      try {
+        const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${githubToken}` } });
+        if (!res.ok) throw new Error("Could not fetch files.");
+        const files = await res.json();
+        
+        const ignoreList = ['index.html', 'admin.html', 'about-us.html', 'contact.html', 'privacy-policy.html', 'advertise.html', 'our-story.html', 'lifestyle.html', 'entertainment.html', 'technology.html', 'health.html', 'travel.html', 'business.html', 'fashion.html', 'food.html', 'trending-news.html'];
+        
+        select.innerHTML = '<option value="">-- Select an Article --</option>';
+        files.forEach(f => {
+          if (f.name.endsWith('.html') && !ignoreList.includes(f.name)) {
+            const opt = document.createElement('option');
+            opt.value = f.name;
+            opt.text = f.name.replace('.html', '').replace(/-/g, ' ');
+            opt.text = opt.text.charAt(0).toUpperCase() + opt.text.slice(1);
+            select.appendChild(opt);
+          }
+        });
+        logMessage("List updated.");
+      } catch(err) {
+        logMessage(err.message, true);
+        select.innerHTML = '<option value="">Error loading list</option>';
+      }
+    }
+
+    async function loadArticleContent() {
+      const filename = document.getElementById('articleSelect').value;
+      const editArea = document.getElementById('editArea');
+      if (!filename) { editArea.style.display = 'none'; return; }
+
+      const { githubToken } = getKeys();
+      editArea.style.display = 'none';
+      logMessage(`Loading ${filename}...`);
+
+      try {
+        const file = await getGitHubFile(githubToken, filename);
+        currentEditingFileSha = file.sha;
+        currentEditingFileName = filename;
+        currentOriginalHtml = file.content;
+
+        // Parse HTML to extract title and body
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(file.content, 'text/html');
+        
+        const titleEl = doc.querySelector('.article-title');
+        const bodyEl = doc.querySelector('.article-body');
+
+        document.getElementById('editTitle').value = titleEl ? titleEl.innerText : 'Unknown Title';
+        quill.root.innerHTML = bodyEl ? bodyEl.innerHTML : '';
+        
+        editArea.style.display = 'block';
+        logMessage(`Ready to edit ${filename}`);
+      } catch(err) {
+        logMessage(err.message, true);
+      }
+    }
+
+    async function saveEditedArticle() {
+      const { githubToken } = getKeys();
+      const btn = document.getElementById('updateBtn');
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      try {
+        logMessage(`Saving changes to ${currentEditingFileName}...`);
+        
+        // Parse original HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(currentOriginalHtml, 'text/html');
+        
+        // Update Title and Body
+        const newTitle = document.getElementById('editTitle').value;
+        const newBody = quill.root.innerHTML;
+
+        const titleEl = doc.querySelector('.article-title');
+        const bodyEl = doc.querySelector('.article-body');
+        const docTitle = doc.querySelector('title');
+
+        if (titleEl) titleEl.innerText = newTitle;
+        if (docTitle) docTitle.innerText = `${newTitle} - FeelDesire`;
+        if (bodyEl) bodyEl.innerHTML = newBody;
+
+        const updatedHtml = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+
+        await uploadToGitHub(githubToken, currentEditingFileName, updatedHtml, `Edited article: ${newTitle}`, currentEditingFileSha);
+        logMessage("✅ Article updated successfully! Vercel is deploying changes.");
+      } catch(err) {
+        logMessage(err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Update Article";
+      }
+    }
+
+    // --- GITHUB API HELPERS ---
     async function getGitHubFile(token, path) {
       const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-      const res = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
       if (!res.ok) throw new Error("GitHub Error fetching " + path);
       const data = await res.json();
-      return {
-        sha: data.sha,
-        content: decodeURIComponent(escape(window.atob(data.content)))
-      };
+      return { sha: data.sha, content: decodeURIComponent(escape(window.atob(data.content))) };
     }
 
     async function uploadToGitHub(token, path, content, message, sha = null) {
       const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-      const body = {
-        message: message,
-        content: window.btoa(unescape(encodeURIComponent(content)))
-      };
+      const body = { message: message, content: window.btoa(unescape(encodeURIComponent(content))) };
       if (sha) body.sha = sha;
-
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error("GitHub Upload Error: " + err.message);
-      }
+      const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error("GitHub Upload Error");
     }
 
     function createHTML(data, slug, dateStr, imageUrl) {
-      return `<!DOCTYPE html>
+      return \`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.title} - FeelDesire</title>
+  <title>\${data.title} - FeelDesire</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -223,93 +363,53 @@ Return ONLY a valid JSON object (no markdown formatting, no backticks) with thes
       </div>
     </nav>
   </header>
-
   <main class="container">
     <article>
       <header class="article-header">
-        <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-        <h1 class="article-title">${data.title}</h1>
-        <div class="article-meta">
-          By <a href="#"><strong>AI Editor</strong></a> | ${dateStr} | 5 min read
-        </div>
+        <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
+        <h1 class="article-title">\${data.title}</h1>
+        <div class="article-meta">By <a href="#"><strong>AI Editor</strong></a> | \${dateStr} | 5 min read</div>
       </header>
-      <div class="article-featured-image">
-        <img src="${imageUrl}" alt="${data.title}">
-      </div>
+      <div class="article-featured-image"><img src="\${imageUrl}" alt="\${data.title}"></div>
       <div class="article-body">
-        ${data.htmlContent}
+        \${data.htmlContent}
       </div>
     </article>
   </main>
-
   <footer>
     <div class="container">
-      <div class="footer-content">
-        <div>
-          <a href="index.html" class="logo footer-logo">Feel<span>Desire</span></a>
-          <p class="footer-desc">Your daily source for lifestyle, entertainment, tech, and health news. Stay inspired, stay informed.</p>
-        </div>
-        <div>
-          <h4 class="footer-title">Categories</h4>
-          <ul class="footer-links">
-            <li><a href="lifestyle.html">Lifestyle</a></li>
-            <li><a href="technology.html">Technology</a></li>
-            <li><a href="health.html">Health</a></li>
-            <li><a href="travel.html">Travel</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="footer-title">About Us</h4>
-          <ul class="footer-links">
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="our-story.html">Our Story</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="advertise.html">Advertise</a></li>
-            <li><a href="privacy-policy.html">Privacy Policy</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 FeelDesire. All Rights Reserved.</p>
-      </div>
+      <div class="footer-bottom"><p>&copy; 2026 FeelDesire. All Rights Reserved.</p></div>
     </div>
   </footer>
-  <script src="script.js"><\/script>
+  <script src="script.js"><\\/script>
 </body>
-</html>`;
+</html>\`;
     }
 
     function updateIndexHtml(indexContent, data, slug, dateStr, imageUrl) {
-        const cardHtml = `
+        const cardHtml = \`
             <article class="post-card">
-              <a href="${slug}.html" class="post-img-wrapper">
-                <img src="${imageUrl}" alt="${data.category}">
-              </a>
+              <a href="\${slug}.html" class="post-img-wrapper"><img src="\${imageUrl}" alt="\${data.category}"></a>
               <div class="post-content">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-                <a href="${slug}.html">
-                  <h3 class="post-title">${data.title}</h3>
-                </a>
-                <div class="post-meta">By AI Editor • ${dateStr}</div>
-                <p class="post-excerpt">${data.excerpt}</p>
+                <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
+                <a href="\${slug}.html"><h3 class="post-title">\${data.title}</h3></a>
+                <div class="post-meta">By AI Editor • \${dateStr}</div>
+                <p class="post-excerpt">\${data.excerpt}</p>
               </div>
             </article>
-            <!-- NEW_ARTICLE_ANCHOR -->`;
+            <!-- NEW_ARTICLE_ANCHOR -->\`;
 
-        const trendingHtml = `
+        const trendingHtml = \`
             <li>
-              <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-              <a href="${slug}.html" class="trending-title">${data.title}</a>
+              <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
+              <a href="\${slug}.html" class="trending-title">\${data.title}</a>
               <span class="post-meta">Just now</span>
             </li>
-            <!-- NEW_TRENDING_ANCHOR -->`;
+            <!-- NEW_TRENDING_ANCHOR -->\`;
             
         let newContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
-        newContent = newContent.replace('<!-- NEW_TRENDING_ANCHOR -->', trendingHtml);
-        return newContent;
+        return newContent.replace('<!-- NEW_TRENDING_ANCHOR -->', trendingHtml);
     }
   </script>
 </body>
 </html>
-
-
