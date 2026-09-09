@@ -12,8 +12,8 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
 async function generateSingle() {
-    const keyword = "buy laptop";
-    const cat = "Technology";
+    const keyword = "bathroom shower";
+    const cat = "Lifestyle";
     
     console.log(`Generating: ${keyword}...`);
     
@@ -117,4 +117,5 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 generateSingle();
+
 
