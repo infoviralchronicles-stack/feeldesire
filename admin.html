@@ -249,7 +249,7 @@
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${keys.geminiKey}`;
         const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags"}`;
+{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}`;
         
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
         if (!response.ok) throw new Error("AI Generation failed.");
@@ -257,6 +257,9 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
         const aiData = await response.json();
         let text = aiData.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
         const data = JSON.parse(text);
+        
+        // Remove duplicate title if AI included it in htmlContent
+        data.htmlContent = data.htmlContent.replace(/^\s*<h[12][^>]*>.*?<\/h[12]>\s*/i, '');
 
         const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
