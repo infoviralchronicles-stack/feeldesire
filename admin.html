@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeelDesire Online Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 40px 10px; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+    h1 { color: #2c3e50; font-size: 26px; margin-bottom: 5px; text-align: center; }
+    p.subtitle { color: #7f8c8d; margin-bottom: 30px; font-size: 15px; text-align: center; }
+    
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; color: #34495e; font-size: 14px; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; font-size: 15px; box-sizing: border-box; outline: none; transition: border 0.3s; }
+    input:focus { border-color: #3498db; }
+    .help-text { font-size: 12px; color: #7f8c8d; margin-top: 5px; display: block; }
+    
+    button { width: 100%; padding: 15px; background-color: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+    button:hover { background-color: #c0392b; }
+    button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+    
+    #log { margin-top: 25px; padding: 15px; background: #2c3e50; color: #2ecc71; border-radius: 8px; font-family: monospace; font-size: 13px; height: 150px; overflow-y: auto; display: none; }
+    .error-log { color: #e74c3c !important; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Online Publisher</h1>
+    <p class="subtitle">Enter keyword, let AI write it, and push directly to your live website.</p>
+
+    <div class="form-group">
+      <label>Google Gemini API Key</label>
+      <input type="password" id="geminiKey" placeholder="AIzaSy...">
+      <span class="help-text">Your free API key from Google AI Studio. (Saved in browser)</span>
+    </div>
+
+    <div class="form-group">
+      <label>GitHub Personal Access Token (Classic)</label>
+      <input type="password" id="githubToken" placeholder="ghp_...">
+      <span class="help-text">Requires 'repo' scope to push files to your website. (Saved in browser)</span>
+    </div>
+
+    <div class="form-group">
+      <label>Article Keyword or Topic</label>
+      <input type="text" id="keyword" placeholder="e.g. Best Smartphones of 2026">
+    </div>
+
+    <button id="publishBtn" onclick="startPublishing()">Auto Generate & Publish</button>
+
+    <div id="log"></div>
+  </div>
+
+  <script>
+    // Load saved keys
+    document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+    document.getElementById('githubToken').value = localStorage.getItem('githubToken') || '';
+
+    const REPO_OWNER = 'infoviralchronicles-stack';
+    const REPO_NAME = 'feeldesire';
+
+    function logMessage(msg, isError = false) {
+      const logDiv = document.getElementById('log');
+      logDiv.style.display = 'block';
+      logDiv.innerHTML += `<div class="${isError ? 'error-log' : ''}">> ${msg}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    async function startPublishing() {
+      const geminiKey = document.getElementById('geminiKey').value.trim();
+      const githubToken = document.getElementById('githubToken').value.trim();
+      const keyword = document.getElementById('keyword').value.trim();
+      const btn = document.getElementById('publishBtn');
+
+      if (!geminiKey || !githubToken || !keyword) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      // Save keys for next time
+      localStorage.setItem('geminiKey', geminiKey);
+      localStorage.setItem('githubToken', githubToken);
+
+      btn.disabled = true;
+      btn.innerText = "Publishing... (Do not close tab)";
+      document.getElementById('log').innerHTML = '';
+      document.getElementById('log').style.display = 'none';
+
+      try {
+        logMessage("Starting AI generation for: " + keyword);
+        const articleData = await generateArticle(geminiKey, keyword);
+        logMessage("AI generated article successfully: " + articleData.title);
+
+        logMessage("Preparing HTML files...");
+        const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const imageUrl = `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/1200/800`;
+        
+        const newHtml = createHTML(articleData, slug, dateStr, imageUrl);
+        
+        logMessage("Fetching latest index.html from GitHub...");
+        const indexFile = await getGitHubFile(githubToken, 'index.html');
+        
+        logMessage("Injecting new article into index.html...");
+        const newIndexContent = updateIndexHtml(indexFile.content, articleData, slug, dateStr, imageUrl);
+
+        logMessage("Committing new article page to GitHub...");
+        await uploadToGitHub(githubToken, `${slug}.html`, newHtml, `Publish: ${articleData.title}`);
+
+        logMessage("Committing updated index.html to GitHub...");
+        await uploadToGitHub(githubToken, 'index.html', newIndexContent, `Update index for: ${articleData.title}`, indexFile.sha);
+
+        logMessage("✅ Success! Your article is published.");
+        logMessage("Vercel is now building your site. It will be live in 1-2 minutes.");
+        document.getElementById('keyword').value = '';
+
+      } catch (err) {
+        logMessage(err.message, true);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Auto Generate & Publish";
+      }
+    }
+
+    async function generateArticle(apiKey, keyword) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
+Return ONLY a valid JSON object (no markdown formatting, no backticks) with these keys:
+{
+  "title": "A catchy title",
+  "category": "One of: Lifestyle, Entertainment, Technology, Health, Travel, Business, Fashion, Food, Trending News",
+  "excerpt": "A 1-2 sentence summary.",
+  "htmlContent": "Main article content in HTML tags (<p>, <h2>, etc). No <html> or <body> tags."
+}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      });
+
+      if (!response.ok) throw new Error("Gemini API Error: " + response.statusText);
+      const data = await response.json();
+      let text = data.candidates[0].content.parts[0].text;
+      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(text);
+    }
+
+    async function getGitHubFile(token, path) {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("GitHub Error fetching " + path);
+      const data = await res.json();
+      return {
+        sha: data.sha,
+        content: decodeURIComponent(escape(window.atob(data.content)))
+      };
+    }
+
+    async function uploadToGitHub(token, path, content, message, sha = null) {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+      const body = {
+        message: message,
+        content: window.btoa(unescape(encodeURIComponent(content)))
+      };
+      if (sha) body.sha = sha;
+
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error("GitHub Upload Error: " + err.message);
+      }
+    }
+
+    function createHTML(data, slug, dateStr, imageUrl) {
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${data.title} - FeelDesire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <a href="index.html" class="logo">Feel<span>Desire</span></a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search articles...">
+          <button type="submit">Search</button>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Toggle Navigation">&#9776;</button>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="lifestyle.html">Lifestyle</a></li>
+          <li><a href="entertainment.html">Entertainment</a></li>
+          <li><a href="technology.html">Technology</a></li>
+          <li><a href="health.html">Health</a></li>
+          <li><a href="travel.html">Travel</a></li>
+          <li><a href="business.html">Business</a></li>
+          <li><a href="fashion.html">Fashion</a></li>
+          <li><a href="food.html">Food</a></li>
+          <li><a href="trending-news.html">Trending News</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header class="article-header">
+        <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+        <h1 class="article-title">${data.title}</h1>
+        <div class="article-meta">
+          By <a href="#"><strong>AI Editor</strong></a> | ${dateStr} | 5 min read
+        </div>
+      </header>
+      <div class="article-featured-image">
+        <img src="${imageUrl}" alt="${data.title}">
+      </div>
+      <div class="article-body">
+        ${data.htmlContent}
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <a href="index.html" class="logo footer-logo">Feel<span>Desire</span></a>
+          <p class="footer-desc">Your daily source for lifestyle, entertainment, tech, and health news. Stay inspired, stay informed.</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="lifestyle.html">Lifestyle</a></li>
+            <li><a href="technology.html">Technology</a></li>
+            <li><a href="health.html">Health</a></li>
+            <li><a href="travel.html">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">About Us</h4>
+          <ul class="footer-links">
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="our-story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="advertise.html">Advertise</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FeelDesire. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>`;
+    }
+
+    function updateIndexHtml(indexContent, data, slug, dateStr, imageUrl) {
+        const cardHtml = `
+            <article class="post-card">
+              <a href="${slug}.html" class="post-img-wrapper">
+                <img src="${imageUrl}" alt="${data.category}">
+              </a>
+              <div class="post-content">
+                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+                <a href="${slug}.html">
+                  <h3 class="post-title">${data.title}</h3>
+                </a>
+                <div class="post-meta">By AI Editor • ${dateStr}</div>
+                <p class="post-excerpt">${data.excerpt}</p>
+              </div>
+            </article>
+            <!-- NEW_ARTICLE_ANCHOR -->`;
+
+        const trendingHtml = `
+            <li>
+              <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+              <a href="${slug}.html" class="trending-title">${data.title}</a>
+              <span class="post-meta">Just now</span>
+            </li>
+            <!-- NEW_TRENDING_ANCHOR -->`;
+            
+        let newContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
+        newContent = newContent.replace('<!-- NEW_TRENDING_ANCHOR -->', trendingHtml);
+        return newContent;
+    }
+  </script>
+</body>
+</html>
