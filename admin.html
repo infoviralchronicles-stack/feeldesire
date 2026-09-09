@@ -3,262 +3,339 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FeelDesire CMS (Mini WordPress)</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>FeelDesire WordPress Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 40px 10px; margin: 0; }
-    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; width: 100%; }
-    h1 { color: #2c3e50; font-size: 26px; margin-bottom: 5px; text-align: center; }
-    p.subtitle { color: #7f8c8d; margin-bottom: 30px; font-size: 15px; text-align: center; }
+    :root {
+      --sidebar-bg: #1e293b;
+      --sidebar-hover: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --bg: #f8fafc;
+      --text: #334155;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
     
-    .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 25px; }
-    .tab { flex: 1; text-align: center; padding: 15px; cursor: pointer; font-weight: 600; color: #7f8c8d; transition: all 0.3s; }
-    .tab:hover { background: #f9f9f9; }
-    .tab.active { color: #e74c3c; border-bottom: 2px solid #e74c3c; margin-bottom: -2px; }
+    /* Sidebar */
+    .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; }
+    .sidebar-header { padding: 20px; font-size: 20px; font-weight: 700; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 10px; }
+    .sidebar-header span { color: #38bdf8; }
+    .nav-list { list-style: none; padding: 15px 0; flex: 1; }
+    .nav-item { padding: 12px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-weight: 500; transition: 0.2s; color: #cbd5e1; }
+    .nav-item:hover, .nav-item.active { background-color: var(--sidebar-hover); color: white; border-left: 4px solid var(--primary); }
     
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
+    /* Main Content */
+    .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    .topbar { background: white; padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .topbar h2 { font-size: 18px; font-weight: 600; }
+    .topbar a { color: var(--primary); text-decoration: none; font-weight: 500; font-size: 14px; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 5px;}
+    .topbar a:hover { background: var(--primary); color: white; }
+    
+    .content-area { padding: 30px; max-width: 1000px; width: 100%; margin: 0 auto; }
+    
+    /* Sections */
+    .section { display: none; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 30px; border: 1px solid var(--border); }
+    .section.active { display: block; }
+    
+    .section-title { font-size: 22px; font-weight: 600; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+    
+    /* Forms */
     .form-group { margin-bottom: 20px; }
-    label { display: block; font-weight: 600; margin-bottom: 8px; color: #34495e; font-size: 14px; }
-    input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; font-size: 15px; box-sizing: border-box; outline: none; transition: border 0.3s; }
-    input:focus, select:focus { border-color: #3498db; }
-    .help-text { font-size: 12px; color: #7f8c8d; margin-top: 5px; display: block; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+    input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; outline: none; transition: 0.2s; font-family: inherit; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
     
-    button { width: 100%; padding: 15px; background-color: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
-    button:hover { background-color: #c0392b; }
-    button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+    .help-text { font-size: 12px; color: #64748b; margin-top: 6px; display: block; }
     
-    #editor-container { height: 300px; margin-bottom: 20px; border-radius: 0 0 8px 8px; }
-    
-    #log { margin-top: 25px; padding: 15px; background: #2c3e50; color: #2ecc71; border-radius: 8px; font-family: monospace; font-size: 13px; height: 150px; overflow-y: auto; display: none; }
-    .error-log { color: #e74c3c !important; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn:hover { background-color: var(--primary-hover); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .btn-secondary:hover { background-color: #e2e8f0; }
 
-    .global-keys { background: #ecf0f1; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+    /* Editor */
+    #editor-container { height: 400px; font-size: 16px; font-family: 'Inter', sans-serif; border-radius: 0 0 6px 6px; border-color: #cbd5e1; }
+    .ql-toolbar.ql-snow { border-color: #cbd5e1; border-radius: 6px 6px 0 0; background: #f8fafc; padding: 12px; }
+    
+    /* Logs */
+    #log { margin-top: 25px; padding: 15px; background: #f1f5f9; color: #334155; border-left: 4px solid var(--primary); border-radius: 4px; font-family: monospace; font-size: 13px; max-height: 200px; overflow-y: auto; display: none; }
+    .log-success { border-left-color: #10b981 !important; color: #047857 !important; background: #ecfdf5 !important; }
+    .log-error { border-left-color: #ef4444 !important; color: #b91c1c !important; background: #fef2f2 !important; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>FeelDesire CMS</h1>
-    <p class="subtitle">Your Mini-WordPress. Publish new AI articles or edit existing ones.</p>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      W <span>FeelDesire</span>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item active" onclick="switchTab('tab-publish', this)">
+        <span>✨</span> AI Publish
+      </li>
+      <li class="nav-item" onclick="switchTab('tab-edit', this); loadArticlesList();">
+        <span>📝</span> All Articles
+      </li>
+      <li class="nav-item" onclick="switchTab('tab-settings', this)">
+        <span>⚙️</span> Settings
+      </li>
+    </ul>
+  </aside>
 
-    <!-- Global API Keys -->
-    <div class="global-keys">
-      <div class="form-group" style="margin-bottom: 10px;">
-        <label>GitHub Personal Access Token (Required for all actions)</label>
-        <input type="password" id="githubToken" placeholder="ghp_...">
-      </div>
-      <div class="form-group" style="margin-bottom: 0;">
-        <label>Google Gemini API Key (Required for AI Publish)</label>
-        <input type="password" id="geminiKey" placeholder="AIzaSy...">
-      </div>
+  <!-- Main Area -->
+  <main class="main">
+    <div class="topbar">
+      <h2 id="topbar-title">AI Publish</h2>
+      <a href="index.html" target="_blank">View Live Site ↗</a>
     </div>
 
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('publishTab', this)">✨ AI Auto-Publish</div>
-      <div class="tab" onclick="switchTab('editTab', this); loadArticlesList();">✏️ Edit Articles</div>
-    </div>
-
-    <!-- AI Publish Tab -->
-    <div id="publishTab" class="tab-content active">
-      <div class="form-group">
-        <label>Article Keyword or Topic</label>
-        <input type="text" id="keyword" placeholder="e.g. Best Smartphones of 2026">
-      </div>
-      <button id="publishBtn" onclick="startPublishing()">Auto Generate & Publish</button>
-    </div>
-
-    <!-- Edit Article Tab -->
-    <div id="editTab" class="tab-content">
-      <div class="form-group">
-        <label>Select Article to Edit</label>
-        <select id="articleSelect" onchange="loadArticleContent()">
-          <option value="">-- Select an Article --</option>
-        </select>
-        <button id="loadBtn" onclick="loadArticlesList()" style="width: auto; padding: 8px 15px; margin-top: 10px; background: #34495e;">↻ Refresh List</button>
-      </div>
-
-      <div id="editArea" style="display: none; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+    <div class="content-area">
+      
+      <!-- Settings Tab -->
+      <div id="tab-settings" class="section">
+        <h3 class="section-title">API Keys Configuration</h3>
+        <p style="margin-bottom:20px; color:#64748b; font-size:14px;">Configure your API keys here before publishing or editing. Keys are saved securely in your browser.</p>
+        
         <div class="form-group">
-          <label>Article Title</label>
-          <input type="text" id="editTitle">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="githubToken" placeholder="ghp_...">
+          <span class="help-text">Required to save articles to your website.</span>
         </div>
         <div class="form-group">
-          <label>Article Content</label>
-          <div id="editor-container"></div>
+          <label>Google Gemini API Key</label>
+          <input type="password" id="geminiKey" placeholder="AIzaSy...">
+          <span class="help-text">Required to auto-generate articles using AI.</span>
         </div>
-        <button id="updateBtn" onclick="saveEditedArticle()">Update Article</button>
+        <button class="btn" onclick="saveKeys()">Save Settings</button>
       </div>
+
+      <!-- AI Publish Tab -->
+      <div id="tab-publish" class="section active">
+        <h3 class="section-title">Write New Post with AI</h3>
+        
+        <div class="form-group">
+          <label>Enter Topic or Keyword</label>
+          <input type="text" id="keyword" placeholder="e.g., Best Smartphones of 2026" style="font-size:18px; padding:15px;">
+        </div>
+        
+        <button id="publishBtn" class="btn" style="width:100%; padding:15px; font-size:16px;" onclick="startPublishing()">
+          Generate & Publish Automatically
+        </button>
+      </div>
+
+      <!-- Edit Articles Tab -->
+      <div id="tab-edit" class="section">
+        <h3 class="section-title">Edit Existing Articles</h3>
+        
+        <div class="form-group" style="display:flex; gap:10px;">
+          <select id="articleSelect" onchange="loadArticleContent()" style="flex:1;">
+            <option value="">-- Select an Article to Edit --</option>
+          </select>
+          <button id="loadBtn" class="btn btn-secondary" onclick="loadArticlesList()">Refresh</button>
+        </div>
+
+        <div id="editArea" style="display: none; margin-top: 30px;">
+          <div class="form-group">
+            <label>Article Title</label>
+            <input type="text" id="editTitle" style="font-size:18px; padding:15px; font-weight:600;">
+          </div>
+          <div class="form-group">
+            <label>Content</label>
+            <div id="editor-container"></div>
+          </div>
+          <button id="updateBtn" class="btn" style="padding:15px 30px;" onclick="saveEditedArticle()">Update Article</button>
+        </div>
+      </div>
+
+      <div id="log"></div>
+
     </div>
+  </main>
 
-    <div id="log"></div>
-  </div>
-
-  <!-- Quill JS -->
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
   <script>
-    // Initialize Quill Editor
+    // Editor Initialization
     var quill = new Quill('#editor-container', {
       theme: 'snow',
+      placeholder: 'Write your article content here...',
       modules: {
         toolbar: [
-          [{ 'header': [2, 3, false] }],
-          ['bold', 'italic', 'underline'],
-          ['link', 'blockquote', 'image', 'video'],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+          [{ 'header': [2, 3, 4, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          ['blockquote', 'code-block'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'align': [] }],
+          ['link', 'image', 'video'],
+          ['clean']
         ]
       }
     });
 
-    // Load saved keys
-    document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
-    document.getElementById('githubToken').value = localStorage.getItem('githubToken') || '';
-
     const REPO_OWNER = 'infoviralchronicles-stack';
     const REPO_NAME = 'feeldesire';
-
-    // Current Editing State
     let currentEditingFileSha = null;
     let currentEditingFileName = null;
     let currentOriginalHtml = null;
 
-    function switchTab(tabId, element) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      element.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
+    // Load initial keys
+    document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+    document.getElementById('githubToken').value = localStorage.getItem('githubToken') || '';
+
+    function saveKeys() {
+      localStorage.setItem('geminiKey', document.getElementById('geminiKey').value.trim());
+      localStorage.setItem('githubToken', document.getElementById('githubToken').value.trim());
+      showLog("Settings saved successfully!", "success");
     }
 
-    function logMessage(msg, isError = false) {
-      const logDiv = document.getElementById('log');
-      logDiv.style.display = 'block';
-      logDiv.innerHTML += `<div class="${isError ? 'error-log' : ''}">> ${msg}</div>`;
-      logDiv.scrollTop = logDiv.scrollHeight;
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.getElementById('topbar-title').innerText = element.innerText.replace('✨', '').replace('📝', '').replace('⚙️', '').trim();
+      document.getElementById('log').style.display = 'none';
+    }
+
+    function showLog(msg, type = "info") {
+      const log = document.getElementById('log');
+      log.style.display = 'block';
+      log.className = type === 'success' ? 'log-success' : type === 'error' ? 'log-error' : '';
+      log.innerText = "> " + msg;
     }
 
     function getKeys() {
-      const geminiKey = document.getElementById('geminiKey').value.trim();
       const githubToken = document.getElementById('githubToken').value.trim();
-      localStorage.setItem('geminiKey', geminiKey);
-      localStorage.setItem('githubToken', githubToken);
-      return { geminiKey, githubToken };
+      const geminiKey = document.getElementById('geminiKey').value.trim();
+      if(!githubToken) { showLog("GitHub Token is missing. Please add it in Settings.", "error"); return null; }
+      return { githubToken, geminiKey };
     }
 
-    // --- AI PUBLISH LOGIC ---
+    // --- GitHub API Helpers ---
+    async function getGitHubFile(token, path) {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (!res.ok) throw new Error("Could not read " + path);
+      const data = await res.json();
+      return { sha: data.sha, content: decodeURIComponent(escape(window.atob(data.content))) };
+    }
+
+    async function uploadToGitHub(token, path, content, message, sha = null) {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+      const body = { message: message, content: window.btoa(unescape(encodeURIComponent(content))) };
+      if (sha) body.sha = sha;
+      const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error("Upload failed. Check your GitHub Token permissions.");
+    }
+
+    // --- AI Publish ---
     async function startPublishing() {
-      const { geminiKey, githubToken } = getKeys();
+      const keys = getKeys();
+      if(!keys) return;
+      if(!keys.geminiKey) { showLog("Gemini API Key is missing. Add it in Settings.", "error"); return; }
+      
       const keyword = document.getElementById('keyword').value.trim();
+      if(!keyword) { showLog("Please enter a keyword.", "error"); return; }
+
       const btn = document.getElementById('publishBtn');
-
-      if (!geminiKey || !githubToken || !keyword) {
-        alert("Please fill API keys and keyword!");
-        return;
-      }
-
       btn.disabled = true;
-      btn.innerText = "Publishing... (Do not close tab)";
-      document.getElementById('log').innerHTML = '';
+      btn.innerText = "Generating & Publishing...";
       
       try {
-        logMessage("Starting AI generation for: " + keyword);
-        const articleData = await generateArticle(geminiKey, keyword);
-        logMessage("AI generated article successfully.");
+        showLog("Writing article using AI...");
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keys.geminiKey}`;
+        const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
+Return ONLY a valid JSON object (no markdown formatting) with these keys:
+{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags"}`;
+        
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+        if (!response.ok) throw new Error("AI Generation failed.");
+        
+        const aiData = await response.json();
+        let text = aiData.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(text);
 
-        const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const imageUrl = `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/1200/800`;
         
-        const newHtml = createHTML(articleData, slug, dateStr, imageUrl);
+        const newHtml = createHTML(data, slug, dateStr, imageUrl);
         
-        logMessage("Fetching index.html from GitHub...");
-        const indexFile = await getGitHubFile(githubToken, 'index.html');
+        showLog("Reading website structure...");
+        const indexFile = await getGitHubFile(keys.githubToken, 'index.html');
         
-        const newIndexContent = updateIndexHtml(indexFile.content, articleData, slug, dateStr, imageUrl);
+        const newIndexContent = updateIndexHtml(indexFile.content, data, slug, dateStr, imageUrl);
 
-        logMessage("Saving article to GitHub...");
-        await uploadToGitHub(githubToken, `${slug}.html`, newHtml, `Publish: ${articleData.title}`);
+        showLog("Publishing new article page...");
+        await uploadToGitHub(keys.githubToken, `${slug}.html`, newHtml, `Publish: ${data.title}`);
 
-        logMessage("Updating index.html on GitHub...");
-        await uploadToGitHub(githubToken, 'index.html', newIndexContent, `Update index for: ${articleData.title}`, indexFile.sha);
+        showLog("Updating Homepage...");
+        await uploadToGitHub(keys.githubToken, 'index.html', newIndexContent, `Update index for: ${data.title}`, indexFile.sha);
 
-        logMessage("✅ Success! Your article is published.");
+        showLog("Success! Article is published and will be live shortly.", "success");
         document.getElementById('keyword').value = '';
       } catch (err) {
-        logMessage(err.message, true);
+        showLog(err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerText = "Auto Generate & Publish";
+        btn.innerText = "Generate & Publish Automatically";
       }
     }
 
-    async function generateArticle(apiKey, keyword) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-      const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
-Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body without html/body tags"}`;
-      const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
-      if (!response.ok) throw new Error("Gemini API Error: " + response.statusText);
-      const data = await response.json();
-      let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(text);
-    }
-
-    // --- EDIT ARTICLES LOGIC ---
+    // --- Edit Articles ---
     async function loadArticlesList() {
-      const { githubToken } = getKeys();
-      if (!githubToken) return;
-
-      logMessage("Fetching list of articles...");
+      const keys = getKeys();
+      if(!keys) return;
+      
       const select = document.getElementById('articleSelect');
-      select.innerHTML = '<option value="">Loading...</option>';
+      select.innerHTML = '<option value="">Loading articles...</option>';
+      showLog("Fetching articles list...");
 
       try {
         const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
-        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${githubToken}` } });
-        if (!res.ok) throw new Error("Could not fetch files.");
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${keys.githubToken}` } });
+        if (!res.ok) throw new Error("Could not fetch repository files.");
         const files = await res.json();
         
         const ignoreList = ['index.html', 'admin.html', 'about-us.html', 'contact.html', 'privacy-policy.html', 'advertise.html', 'our-story.html', 'lifestyle.html', 'entertainment.html', 'technology.html', 'health.html', 'travel.html', 'business.html', 'fashion.html', 'food.html', 'trending-news.html'];
         
-        select.innerHTML = '<option value="">-- Select an Article --</option>';
+        select.innerHTML = '<option value="">-- Select an Article to Edit --</option>';
         files.forEach(f => {
           if (f.name.endsWith('.html') && !ignoreList.includes(f.name)) {
             const opt = document.createElement('option');
             opt.value = f.name;
-            opt.text = f.name.replace('.html', '').replace(/-/g, ' ');
-            opt.text = opt.text.charAt(0).toUpperCase() + opt.text.slice(1);
+            opt.text = f.name.replace('.html', '').replace(/-/g, ' ').toUpperCase();
             select.appendChild(opt);
           }
         });
-        logMessage("List updated.");
+        showLog("Articles loaded. Please select one to edit.", "success");
       } catch(err) {
-        logMessage(err.message, true);
-        select.innerHTML = '<option value="">Error loading list</option>';
+        showLog(err.message, "error");
+        select.innerHTML = '<option value="">Failed to load list.</option>';
       }
     }
 
     async function loadArticleContent() {
+      const keys = getKeys();
+      if(!keys) return;
+      
       const filename = document.getElementById('articleSelect').value;
       const editArea = document.getElementById('editArea');
       if (!filename) { editArea.style.display = 'none'; return; }
 
-      const { githubToken } = getKeys();
       editArea.style.display = 'none';
-      logMessage(`Loading ${filename}...`);
+      showLog(`Loading ${filename} into editor...`);
 
       try {
-        const file = await getGitHubFile(githubToken, filename);
+        const file = await getGitHubFile(keys.githubToken, filename);
         currentEditingFileSha = file.sha;
         currentEditingFileName = filename;
         currentOriginalHtml = file.content;
 
-        // Parse HTML to extract title and body
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(file.content, 'text/html');
-        
+        const doc = new DOMParser().parseFromString(file.content, 'text/html');
         const titleEl = doc.querySelector('.article-title');
         const bodyEl = doc.querySelector('.article-body');
 
@@ -266,26 +343,24 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
         quill.root.innerHTML = bodyEl ? bodyEl.innerHTML : '';
         
         editArea.style.display = 'block';
-        logMessage(`Ready to edit ${filename}`);
+        showLog("Ready to edit.", "success");
       } catch(err) {
-        logMessage(err.message, true);
+        showLog(err.message, "error");
       }
     }
 
     async function saveEditedArticle() {
-      const { githubToken } = getKeys();
+      const keys = getKeys();
+      if(!keys) return;
+      
       const btn = document.getElementById('updateBtn');
       btn.disabled = true;
-      btn.innerText = "Saving...";
+      btn.innerText = "Saving Changes...";
 
       try {
-        logMessage(`Saving changes to ${currentEditingFileName}...`);
+        showLog("Saving changes to website...");
+        const doc = new DOMParser().parseFromString(currentOriginalHtml, 'text/html');
         
-        // Parse original HTML
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(currentOriginalHtml, 'text/html');
-        
-        // Update Title and Body
         const newTitle = document.getElementById('editTitle').value;
         const newBody = quill.root.innerHTML;
 
@@ -297,33 +372,16 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
         if (docTitle) docTitle.innerText = `${newTitle} - FeelDesire`;
         if (bodyEl) bodyEl.innerHTML = newBody;
 
-        const updatedHtml = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+        const updatedHtml = '<!DOCTYPE html>\\n' + doc.documentElement.outerHTML;
 
-        await uploadToGitHub(githubToken, currentEditingFileName, updatedHtml, `Edited article: ${newTitle}`, currentEditingFileSha);
-        logMessage("✅ Article updated successfully! Vercel is deploying changes.");
+        await uploadToGitHub(keys.githubToken, currentEditingFileName, updatedHtml, `Edited article: ${newTitle}`, currentEditingFileSha);
+        showLog("Article updated successfully! Vercel is making it live.", "success");
       } catch(err) {
-        logMessage(err.message, true);
+        showLog(err.message, "error");
       } finally {
         btn.disabled = false;
         btn.innerText = "Update Article";
       }
-    }
-
-    // --- GITHUB API HELPERS ---
-    async function getGitHubFile(token, path) {
-      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (!res.ok) throw new Error("GitHub Error fetching " + path);
-      const data = await res.json();
-      return { sha: data.sha, content: decodeURIComponent(escape(window.atob(data.content))) };
-    }
-
-    async function uploadToGitHub(token, path, content, message, sha = null) {
-      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-      const body = { message: message, content: window.btoa(unescape(encodeURIComponent(content))) };
-      if (sha) body.sha = sha;
-      const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      if (!res.ok) throw new Error("GitHub Upload Error");
     }
 
     function createHTML(data, slug, dateStr, imageUrl) {
