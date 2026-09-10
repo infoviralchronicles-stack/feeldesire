@@ -25,7 +25,7 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 1. The article MUST be extremely long, spanning exactly between 950 and 1050 words.
 2. You MUST write at least 8 distinct sections (H2).
 3. Each section MUST contain at least 2 very detailed, long paragraphs. Do not write short sections.
-4. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions and long answers.
+4. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions but keep the answers very short and concise (1 to 2 sentences maximum).
 5. Provide high value, deeply informative, and expansive content. Do not be concise. Expand on every single detail.
 SEO RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>).
@@ -172,6 +172,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
