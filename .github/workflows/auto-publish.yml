@@ -1,0 +1,56 @@
+name: FeelDesire Automated Daily Publisher
+
+on:
+  schedule:
+    # Runs twice a day at 06:00 UTC and 18:00 UTC
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: 'Custom Keyword (leave blank to pick automatically from keywords.txt queue)'
+        required: false
+        default: ''
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run Auto Publisher
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.keyword }}" ]; then
+            node github-action-runner.js "${{ github.event.inputs.keyword }}"
+          else
+            node github-action-runner.js
+          fi
+
+      - name: Commit and Push new article
+        run: |
+          git config --global user.name "FeelDesire Automation Bot"
+          git config --global user.email "bot@feeldesire.com"
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-publish new article via GitHub Action [skip ci]"
+            git push origin main
+          fi
