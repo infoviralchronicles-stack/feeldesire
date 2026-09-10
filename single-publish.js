@@ -125,6 +125,39 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
       <div class="article-body">${data.htmlContent}</div>
     </article>
   </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <a href="index.html" class="logo footer-logo">Feel<span>Desire</span></a>
+          <p class="footer-desc">Your daily source for lifestyle, entertainment, tech, and health news. Stay inspired, stay informed.</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="lifestyle.html">Lifestyle</a></li>
+            <li><a href="technology.html">Technology</a></li>
+            <li><a href="health.html">Health</a></li>
+            <li><a href="travel.html">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">About Us</h4>
+          <ul class="footer-links">
+            <li><a href="our-story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="advertise.html">Advertise</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; FeelDesire. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>`;
 
