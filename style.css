@@ -419,3 +419,18 @@ footer {
     font-size: 2rem;
   }
 }
+
+
+
+/* Article Body Links */
+.article-body a {
+  color: #007bff; /* Bright blue for links */
+  text-decoration: underline;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.article-body a:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
