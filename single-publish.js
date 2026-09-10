@@ -18,10 +18,19 @@ async function generateSingle() {
     console.log(`Generating: ${keyword}...`);
     
     try {
-        const prompt = `You are an expert SEO magazine writer. Write a comprehensive, engaging article about "${keyword}".
+        const prompt = `You are an expert SEO magazine writer. Write a massive, highly comprehensive, and 100% SEO-optimized article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "${cat}", "excerpt": "1 sentence summary", "htmlContent": "HTML body (<p>, <h2>) without html/body tags. DO NOT include the title in the htmlContent."}
-IMPORTANT: DO NOT include the current year (like 2026) in the title or the content of the article.`;
+{"title": "Catchy title MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence SEO meta description", "htmlContent": "HTML body without html/body tags."}
+IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
+1. The article MUST be extremely long, spanning exactly between 950 and 1050 words.
+2. You MUST write at least 8 distinct sections (H2).
+3. Each section MUST contain at least 2 very detailed, long paragraphs. Do not write short sections.
+4. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions and long answers.
+5. Provide high value, deeply informative, and expansive content. Do not be concise. Expand on every single detail.
+SEO RULES:
+6. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>).
+7. Do NOT include the current year anywhere.
+8. Do NOT include an H1 tag.`;
 
         const response = await ai.models.generateContent({
             model: 'gemini-3.6-flash',
@@ -65,7 +74,8 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         return append + match + imgAppend;
     });
     data.htmlContent = html;
-\nconst slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
 
@@ -162,6 +172,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
