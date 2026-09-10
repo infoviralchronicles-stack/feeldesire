@@ -53,9 +53,9 @@ const newSections = `
           </div>
         </section>
 
-        <!-- Section 4: More Stories -->
+        <!-- Section 4: Entertainment -->
         <section style="margin-top: 50px;">
-          <h2 class="section-title">More Stories</h2>
+          <h2 class="section-title">Entertainment</h2>
           <div class="hero-grid">
             ${categories.other.slice(0, 4).join('\n')}
           </div>
@@ -68,4 +68,5 @@ html = html.replace(mainContentRegex, `$1\n${newSections}\n$2`);
 
 fs.writeFileSync('index.html', html);
 console.log('Homepage redesigned successfully!');
+
 
