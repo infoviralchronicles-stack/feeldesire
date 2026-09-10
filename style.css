@@ -65,11 +65,30 @@ header {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
   font-family: var(--font-heading);
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--primary-color);
   letter-spacing: -0.5px;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+  max-width: 220px;
+  display: block;
+  object-fit: contain;
+}
+
+.footer-logo img {
+  height: 38px;
+  width: auto;
+  max-width: 210px;
+  display: block;
+  object-fit: contain;
 }
 
 .logo span {

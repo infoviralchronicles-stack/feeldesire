@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
+  <defs>
+    <linearGradient id="logoPrimaryGradWhite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="logoFlameGradWhite" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="100%" stop-color="#fda4af"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Logo Mark Icon (Left) -->
+  <g transform="translate(6, 6)">
+    <!-- Icon Container Pill -->
+    <rect width="52" height="52" rx="14" fill="url(#logoPrimaryGradWhite)"/>
+    <rect x="1" y="1" width="50" height="50" rx="13" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    
+    <!-- Styled Letter F -->
+    <path d="M18 14 h16 c2.5 0 4.5 2 4.5 4.5 s-2 4.5 -4.5 4.5 h-8.5 v6.5 h7.5 c2.5 0 4.5 2 4.5 4.5 s-2 4.5 -4.5 4.5 h-7.5 v11 c0 2.5 -2 4.5 -4.5 4.5 s-4.5 -2 -4.5 -4.5 V18.5 c0 -2.5 2 -4.5 4.5 -4.5 z" 
+          fill="#ffffff"/>
+    
+    <!-- Desire Accent Flame / Spark -->
+    <path d="M33 42 c-1.5 -4.5 -0.5 -9.5 2.2 -13.5 c1 4 3.7 6.5 5.7 8 c3.2 -5.5 1.7 -12.7 -2.7 -18.5 c8.5 5 12.2 14 9.5 22.5 c-2.2 7 -9.2 11 -16.2 9.5 c3 -2 5 -4.7 1.5 -8 z" 
+          fill="url(#logoFlameGradWhite)"/>
+    <circle cx="36" cy="18" r="2" fill="#fef08a"/>
+  </g>
+
+  <!-- Typography: FeelDesire -->
+  <g transform="translate(68, 43)">
+    <!-- 'Feel' in Pure White for dark footer background -->
+    <text font-family="'Playfair Display', Georgia, serif" font-size="32" font-weight="700" letter-spacing="-0.5" fill="#ffffff">Feel</text>
+    <!-- 'Desire' in Light Radiant Coral -->
+    <text x="66" font-family="'Playfair Display', Georgia, serif" font-size="32" font-weight="700" letter-spacing="-0.5" fill="url(#logoFlameGradWhite)">Desire</text>
+  </g>
+</svg>
