@@ -36,7 +36,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 
         const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const imageUrl = `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/1200/800`;
+        const imageUrl = `https://loremflickr.com/1200/800/${keyword.replace(/ /g, ",")}`;
 
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -117,6 +117,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
