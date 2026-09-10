@@ -18,9 +18,9 @@ async function generateSingle() {
     console.log(`Generating: ${keyword}...`);
     
     try {
-        const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
+        const prompt = `You are an expert SEO magazine writer. Write a comprehensive, engaging article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title", "category": "${cat}", "excerpt": "1 sentence summary", "htmlContent": "HTML body (<p>, <h2>) without html/body tags. DO NOT include the title in the htmlContent."}
+{"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "${cat}", "excerpt": "1 sentence summary", "htmlContent": "HTML body (<p>, <h2>) without html/body tags. DO NOT include the title in the htmlContent."}
 IMPORTANT: DO NOT include the current year (like 2026) in the title or the content of the article.`;
 
         const response = await ai.models.generateContent({
@@ -117,6 +117,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 

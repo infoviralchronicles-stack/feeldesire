@@ -247,10 +247,10 @@
  try {
  showLog("Writing article using AI...");
  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${keys.geminiKey}`;
- const prompt = `You are an expert magazine writer. Write a comprehensive, engaging article about "${keyword}".
+ const prompt = `You are an expert SEO magazine writer. Write a comprehensive, engaging article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}
-IMPORTANT: DO NOT include the current year (like ) in the title or the content of the article.`;
+{"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}
+IMPORTANT: DO NOT include the current year in the title or the content of the article.`;
  
  const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
  if (!response.ok) throw new Error("AI Generation failed.");
