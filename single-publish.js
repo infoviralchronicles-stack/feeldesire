@@ -163,6 +163,30 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
 
         fs.writeFileSync(`${slug}.html`, articleHtml);
 
+        // --- Inject Related & Latest Articles ---
+        const idxHtml = fs.readFileSync('index.html', 'utf8');
+        const cardRx = /<article class="post-card">\s*<a href="([^"]+)" class="post-img-wrapper"><img src="([^"]+)"><\/a>\s*<div class="post-content">\s*<a href="[^"]*" class="post-category">([^<]+)<\/a>\s*<a href="[^"]*"><h3 class="post-title">([^<]+)<\/h3><\/a>\s*<div class="post-meta">By <span[^>]*>([^<]+)<\/span>\s*&bull;\s*([^<]+)<\/div>\s*<p class="post-excerpt">([^<]*)<\/p>/g;
+        const allArticles = [];
+        let m;
+        while ((m = cardRx.exec(idxHtml)) !== null) {
+            allArticles.push({ href: m[1], image: m[2], category: m[3].trim(), title: m[4].trim(), author: m[5].trim(), date: m[6].trim() });
+        }
+        const related = allArticles.filter(a => a.category === data.category && a.href !== slug + '.html').slice(0, 3);
+        const latest = allArticles.filter(a => a.href !== slug + '.html').slice(0, 4);
+        function mkCard(a) {
+            return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '"></a><div class="post-content"><a href="' + a.category.toLowerCase() + '.html" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
+        }
+        let sectionsHtml = '';
+        if (related.length > 0) {
+            sectionsHtml += '<section class="related-articles" style="margin-top:50px;"><div class="container"><h2 class="section-title"><span class="tag-box">Related Articles</span></h2><div class="posts-grid">' + related.map(mkCard).join('') + '</div></div></section>';
+        }
+        sectionsHtml += '<section class="latest-articles" style="margin-top:50px;margin-bottom:40px;"><div class="container"><h2 class="section-title"><span class="tag-box">Latest Articles</span></h2><div class="posts-grid">' + latest.map(mkCard).join('') + '</div></div></section>';
+        
+        let finalHtml = fs.readFileSync(slug + '.html', 'utf8');
+        finalHtml = finalHtml.replace('<footer>', sectionsHtml + '<footer>');
+        fs.writeFileSync(slug + '.html', finalHtml);
+
+
         let indexContent = fs.readFileSync('index.html', 'utf8');
         const cardHtml = `
             <!-- NEW_ARTICLE_ANCHOR -->
