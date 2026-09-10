@@ -116,6 +116,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
             </article>`;
         indexContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
         fs.writeFileSync('index.html', indexContent);
+        require('child_process').execSync('node rebuild-categories.js');
         
         console.log(`   Saved ${slug}.html`);
     } catch (e) {
@@ -130,6 +131,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
