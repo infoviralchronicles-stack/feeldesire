@@ -621,6 +621,9 @@ header {
 
 /* Sidebar Update */
 .sidebar {
+  position: sticky;
+  top: 20px;
+  align-self: start;
   border-left: none;
   padding-left: 0;
 }
@@ -665,3 +668,4 @@ header {
 .section-dark .post-card { background: #fff; border: 1px solid var(--border-color); box-shadow: none !important; }
 .section-dark .post-title, .section-dark .post-excerpt, .section-dark .post-meta { color: var(--text-dark); }
 .section-dark .post-excerpt { color: #475569; }
+
