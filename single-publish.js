@@ -129,6 +129,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
     <nav class="main-nav">
       <div class="container">
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="lifestyle.html">Lifestyle</a></li>
           <li><a href="entertainment.html">Entertainment</a></li>
           <li><a href="technology.html">Technology</a></li>
