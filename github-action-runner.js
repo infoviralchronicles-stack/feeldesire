@@ -49,7 +49,8 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 SEO RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>).
 7. Do NOT include the current year anywhere.
-8. Do NOT include an H1 tag.`;
+8. Do NOT include an H1 tag.
+9. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean spaces instead of dashes.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
@@ -60,6 +61,15 @@ SEO RULES:
     let text = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
     const data = JSON.parse(text);
     data.htmlContent = data.htmlContent.replace(/^\s*<h[12][^>]*>.*?<\/h[12]>\s*/i, '');
+
+    // Automatically remove hyphens/dashes between words in the generated article body (preserving HTML tags and attributes)
+    data.htmlContent = data.htmlContent.replace(/(>)([^<]+)(<)/g, (match, prefix, textNode, suffix) => {
+        let cleanText = textNode;
+        while (/([A-Za-z0-9]+)[-–—]([A-Za-z0-9]+)/.test(cleanText)) {
+            cleanText = cleanText.replace(/([A-Za-z0-9]+)[-–—]([A-Za-z0-9]+)/g, '$1 $2');
+        }
+        return prefix + cleanText + suffix;
+    });
 
     const unsplashKey = "hFl_35GKYSCzGjcC_nZrnchqvcvTJ17FTlCHL6IK6sg";
     const unsplashUrl = 'https://api.unsplash.com/photos/random?count=3&query=' + encodeURIComponent(keyword) + '&client_id=' + unsplashKey;
