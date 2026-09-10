@@ -2,6 +2,7 @@ require('dotenv').config();
 const { GoogleGenAI } = require('@google/genai');
 const fs = require('fs');
 const { execSync } = require('child_process');
+const { fetchUniqueRelevantImages } = require('./image-fetcher');
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -56,19 +57,10 @@ SEO RULES:
         
         // Auto-inject internal links if the AI failed to add them
         
-    const unsplashKey = "hFl_35GKYSCzGjcC_nZrnchqvcvTJ17FTlCHL6IK6sg";
-    const unsplashUrl = 'https://api.unsplash.com/photos/random?count=3&query=' + encodeURIComponent(keyword) + '&client_id=' + unsplashKey;
-    let images = [];
-    try {
-        const uRes = await fetch(unsplashUrl);
-        if(uRes.ok) {
-            images = await uRes.json();
-        }
-    } catch(e) { console.error(e); }
-    
-    const imageUrl = images[0] ? images[0].urls.regular : "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop";
-    const inlineImg1 = images[1] ? images[1].urls.regular : "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=500&fit=crop";
-    const inlineImg2 = images[2] ? images[2].urls.regular : "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=500&fit=crop";
+    const fetchedImgs = await fetchUniqueRelevantImages(keyword, data.category, __dirname);
+    const imageUrl = fetchedImgs.featured;
+    const inlineImg1 = fetchedImgs.inline1;
+    const inlineImg2 = fetchedImgs.inline2;
 
         const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
