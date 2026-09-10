@@ -250,7 +250,7 @@
  const prompt = `You are an expert SEO magazine writer. Write a comprehensive, engaging article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
 {"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}
-IMPORTANT: DO NOT include the current year in the title or the content of the article.`;
+IMPORTANT: DO NOT include the current year in the title or the content. Also, include exactly 2 internal HTML links (<a> tags) pointing to other pages like "technology.html" or "lifestyle.html". Put the first link in the first paragraph, and the second link in a middle paragraph. Use natural anchor text.`;
  
  const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
  if (!response.ok) throw new Error("AI Generation failed.");
@@ -264,7 +264,7 @@ IMPORTANT: DO NOT include the current year in the title or the content of the ar
 
  const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
- const imageUrl = `https://loremflickr.com/1200/800/${keyword.replace(/ /g, ",")}`;
+ const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(keyword + " photorealistic high quality")}?width=1200&height=800&nologo=true`;
  
  const newHtml = createHTML(data, slug, dateStr, imageUrl);
  
@@ -473,5 +473,6 @@ IMPORTANT: DO NOT include the current year in the title or the content of the ar
  </script>
 </body>
 </html>
+
 
 
