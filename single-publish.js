@@ -51,7 +51,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(keyword + " photorealistic high quality")}?width=1200&height=800&nologo=true`;
 
-        const html = `<!DOCTYPE html>
+        const articleHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -100,7 +100,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 </body>
 </html>`;
 
-        fs.writeFileSync(`${slug}.html`, html);
+        fs.writeFileSync(`${slug}.html`, articleHtml);
 
         let indexContent = fs.readFileSync('index.html', 'utf8');
         const cardHtml = `
@@ -144,6 +144,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
