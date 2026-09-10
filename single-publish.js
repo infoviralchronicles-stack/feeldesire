@@ -61,16 +61,32 @@ SEO RULES:
 
     let html = data.htmlContent;
     
-    // Get random articles for internal linking
+    // Get contextually relevant articles for internal linking
     const idxForLinks = fs.readFileSync('index.html', 'utf8');
-    const linkRx = /<a href="([^"]+)"[^>]*><h3 class="post-title">([^<]+)<\/h3><\/a>/g;
+    const linkRx = /<article class="post-card">[\s\S]*?<a href="([^"]+)" class="post-img-wrapper">[\s\S]*?<a href="[^"]*" class="post-category">([^<]+)<\/a>[\s\S]*?<h3 class="post-title">([^<]+)<\/h3>/g;
     const linkArticles = [];
     let lm;
     while ((lm = linkRx.exec(idxForLinks)) !== null) {
-        if (lm[1] !== slug + '.html') linkArticles.push({ href: lm[1], title: lm[2] });
+        if (lm[1] !== slug + '.html') {
+            linkArticles.push({ href: lm[1], category: lm[2].trim(), title: lm[3].trim() });
+        }
     }
-    const lnk1 = linkArticles[Math.floor(Math.random() * linkArticles.length)] || { href: 'index.html', title: 'our homepage' };
-    const lnk2 = linkArticles[Math.floor(Math.random() * linkArticles.length)] || { href: 'index.html', title: 'trending articles' };
+
+    // Score relevance against current keyword/title/category
+    const kwTokens = (keyword + ' ' + (data.category || '')).toLowerCase().split(/[\s,-]+/).filter(w => w.length > 2);
+    function scoreArticle(a) {
+        let score = 0;
+        if (a.category && data.category && a.category.toLowerCase() === data.category.toLowerCase()) score += 5;
+        const targetTokens = (a.title + ' ' + a.href).toLowerCase();
+        kwTokens.forEach(token => {
+            if (targetTokens.includes(token)) score += 3;
+        });
+        return score;
+    }
+
+    linkArticles.sort((a, b) => scoreArticle(b) - scoreArticle(a));
+    const lnk1 = linkArticles[0] || { href: 'index.html', title: 'Related Insights' };
+    const lnk2 = linkArticles[1] || linkArticles[0] || { href: 'index.html', title: 'Trending Coverage' };
 
     let pCount = 0;
     html = html.replace(/<\/p>/g, (match) => {
@@ -127,15 +143,90 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
     </nav>
   </header>
   <main class="container">
+  <div class="article-layout">
+  <div class="article-main">
     <article>
       <header class="article-header">
         <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
         <h1 class="article-title">${data.title}</h1>
-        <div class="article-meta">By AI Editor | ${dateStr}</div>
+        <div class="article-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</div>
       </header>
       <div class="article-featured-image"><img src="${imageUrl}" alt="${data.title}"></div>
       <div class="article-body">${data.htmlContent}</div>
     </article>
+  </div>
+  <aside class="sidebar">
+ 
+ <!-- Trending Widget -->
+ <div class="sidebar-widget">
+ <h3 class="widget-title"><span class="tag-box">Latest Posts</span></h3>
+ <ul class="trending-list">
+            
+            
+            
+            
+            <!-- NEW_TRENDING_ANCHOR -->
+            <li>
+              <a href="the-ultimate-guide-to-smart-home-gadgets-elevating-modern-living.html"><img src="https://images.unsplash.com/photo-1545488897-424e53f3ad92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDYxNjkzfDB8MXxyYW5kb218fHx8fHx8fHwxNzg5MDQwNjY1fA&ixlib=rb-4.1.0&q=80&w=1080" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="technology.html" class="post-category">Technology</a>
+                <a href="the-ultimate-guide-to-smart-home-gadgets-elevating-modern-living.html" class="trending-title">The Ultimate Guide to Smart Home Gadgets: Elevating Modern Living</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">David Thorne</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="the-ultimate-guide-to-choosing-the-perfect-bathroom-sink-for-your-home.html"><img src="https://image.pollinations.ai/prompt/bathroom%20sink%20photorealistic%20high%20quality?width=1200&height=800&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="lifestyle.html" class="post-category">Lifestyle</a>
+                <a href="the-ultimate-guide-to-choosing-the-perfect-bathroom-sink-for-your-home.html" class="trending-title">The Ultimate Guide to Choosing the Perfect Bathroom Sink for Your Home</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">Alex Mercer</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="how-to-choose-the-ultimate-smart-phone-for-your-modern-lifestyle.html"><img src="https://image.pollinations.ai/prompt/smart%20phone%20photorealistic%20high%20quality?width=1200&height=800&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="lifestyle.html" class="post-category">Lifestyle</a>
+                <a href="how-to-choose-the-ultimate-smart-phone-for-your-modern-lifestyle.html" class="trending-title">How to Choose the Ultimate Smart Phone for Your Modern Lifestyle</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">David Thorne</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="the-complete-guide-to-buy-bed-furniture-that-guarantees-restful-sleep.html"><img src="https://image.pollinations.ai/prompt/buy%20bed%20photorealistic%20high%20quality?width=1200&height=800&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="lifestyle.html" class="post-category">Lifestyle</a>
+                <a href="the-complete-guide-to-buy-bed-furniture-that-guarantees-restful-sleep.html" class="trending-title">The Complete Guide to Buy Bed Furniture That Guarantees Restful Sleep</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">Emma Collins</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="the-ultimate-shopping-guide-how-to-buy-bed-designs-for-dreamy-sleep.html"><img src="https://image.pollinations.ai/prompt/buy%20bed%20photorealistic%20high%20quality?width=150&height=150&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="lifestyle.html" class="post-category">Lifestyle</a>
+                <a href="the-ultimate-shopping-guide-how-to-buy-bed-designs-for-dreamy-sleep.html" class="trending-title">The Ultimate Shopping Guide: How to Buy Bed Designs for Dreamy Sleep</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">Emma Collins</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="the-ultimate-guide-to-buy-iphone-how-to-choose-the-right-model-for-your-needs.html"><img src="https://image.pollinations.ai/prompt/buy%20iphone%20photorealistic%20high%20quality?width=150&height=150&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="technology.html" class="post-category">Technology</a>
+                <a href="the-ultimate-guide-to-buy-iphone-how-to-choose-the-right-model-for-your-needs.html" class="trending-title">The Ultimate Guide to Buy iPhone: How to Choose the Right Model for Your Needs</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">David Thorne</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+            <li>
+              <a href="transform-your-daily-routine-the-ultimate-guide-to-upgrading-your-bathroom-shower.html"><img src="https://image.pollinations.ai/prompt/bathroom%20shower%20photorealistic%20high%20quality?width=150&height=150&nologo=true" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="lifestyle.html" class="post-category">Lifestyle</a>
+                <a href="transform-your-daily-routine-the-ultimate-guide-to-upgrading-your-bathroom-shower.html" class="trending-title">Transform Your Daily Routine: The Ultimate Guide to Upgrading Your Bathroom Shower</a>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">Emma Collins</span> &bull; September 10, 2026</span>
+              </div>
+            </li>
+          </ul>
+ </div>
+
+ </aside>
+  </div>
   </main>
 
   <footer>
