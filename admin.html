@@ -252,12 +252,30 @@ Return ONLY a valid JSON object (no markdown formatting) with these keys:
 {"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}
 IMPORTANT: DO NOT include the current year in the title or the content. Also, include exactly 2 internal HTML links (<a> tags) pointing to other pages like "technology.html" or "lifestyle.html". Put the first link in the first paragraph, and the second link in a middle paragraph. Use natural anchor text.`;
  
- const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
- if (!response.ok) throw new Error("AI Generation failed.");
+    let response;
+   let retries = 3;
+   while (retries > 0) {
+       response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+       if (response.ok) break;
+       showLog("AI API busy, retrying in 5 seconds...");
+       await new Promise(r => setTimeout(r, 5000));
+       retries--;
+   }
+   if (!response || !response.ok) throw new Error("AI Generation failed after retries.");
  
- const aiData = await response.json();
-  let text = aiData.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-  const data = JSON.parse(text);
+    const aiData = await response.json();
+   if (!aiData.candidates || !aiData.candidates[0]) {
+       console.error(aiData);
+       throw new Error("Invalid response from Gemini API.");
+   }
+   let text = aiData.candidates[0].content.parts[0].text.replace(/`json/g, '').replace(/`/g, '').trim();
+   let data;
+   try {
+       data = JSON.parse(text);
+   } catch (e) {
+       console.error("Failed to parse JSON", text);
+       throw new Error("AI returned invalid JSON. Please try again.");
+   }
 
   // Auto-inject internal links if the AI failed to add them
   let html = data.htmlContent;
@@ -489,6 +507,8 @@ IMPORTANT: DO NOT include the current year in the title or the content. Also, in
  </script>
 </body>
 </html>
+
+
 
 
 
