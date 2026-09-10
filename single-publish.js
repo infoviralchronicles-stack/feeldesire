@@ -12,8 +12,8 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
 async function generateSingle() {
-    const keyword = "buy iphone";
-    const cat = "Technology";
+    const keyword = "buy bed";
+    const cat = "Lifestyle";
     
     console.log(`Generating: ${keyword}...`);
     
@@ -117,6 +117,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
