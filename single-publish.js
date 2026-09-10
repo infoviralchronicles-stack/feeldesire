@@ -3,6 +3,7 @@ const { GoogleGenAI } = require('@google/genai');
 const fs = require('fs');
 const { execSync } = require('child_process');
 const { fetchUniqueRelevantImages } = require('./image-fetcher');
+const { injectNaturalInternalLinks, getAvailableArticles } = require('./link-injector');
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -74,45 +75,17 @@ SEO RULES:
 
         let html = data.htmlContent;
         
-        // Get contextually relevant articles for internal linking
-        const idxForLinks = fs.readFileSync('index.html', 'utf8');
-        const linkRx = /<article class="post-card">[\s\S]*?<a href="([^"]+)" class="post-img-wrapper">[\s\S]*?<a href="[^"]*" class="post-category">([^<]+)<\/a>[\s\S]*?<h3 class="post-title">([^<]+)<\/h3>/g;
-        const linkArticles = [];
-        let lm;
-        while ((lm = linkRx.exec(idxForLinks)) !== null) {
-            if (lm[1] !== slug + '.html') {
-                linkArticles.push({ href: lm[1], category: lm[2].trim(), title: lm[3].trim() });
-            }
-        }
+        // Inject natural internal links directly into relevant keywords in the body
+        html = injectNaturalInternalLinks(html, slug, data.category, __dirname);
 
-        // Score relevance against current keyword/title/category
-        const kwTokens = (keyword + ' ' + (data.category || '')).toLowerCase().split(/[\s,-]+/).filter(w => w.length > 2);
-        function scoreArticle(a) {
-            let score = 0;
-            if (a.category && data.category && a.category.toLowerCase() === data.category.toLowerCase()) score += 5;
-            const targetTokens = (a.title + ' ' + a.href).toLowerCase();
-            kwTokens.forEach(token => {
-                if (targetTokens.includes(token)) score += 3;
-            });
-            return score;
-        }
-
-        linkArticles.sort((a, b) => scoreArticle(b) - scoreArticle(a));
-        const lnk1 = linkArticles[0] || { href: 'index.html', title: 'Related Insights' };
-        const lnk2 = linkArticles[1] || linkArticles[0] || { href: 'index.html', title: 'Trending Coverage' };
-
+        // Insert inline images at natural reading break points
         let pCount = 0;
         html = html.replace(/<\/p>/g, (match) => {
             pCount++;
-            let append = '';
-            if (pCount === 1) append = ' You might also enjoy reading <a href="' + lnk1.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk1.title + '</a>.';
-            if (pCount === 3) append = ' Discover more in <a href="' + lnk2.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk2.title + '</a>.';
-            
             let imgAppend = '';
             if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
             if (pCount === 5) imgAppend = '\n<img src="' + inlineImg2 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
-            
-            return append + match + imgAppend;
+            return match + imgAppend;
         });
         data.htmlContent = html;
 

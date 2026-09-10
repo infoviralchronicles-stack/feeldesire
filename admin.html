@@ -308,7 +308,7 @@ SEO RULES:
     html = html.replace(/<\/p>/g, (match) => {
         pCount++;
         let append = '';
-        if (pCount === 1) append = ' For more insights, check out our <a href="lifestyle.html">Lifestyle</a> section.';
+        if (pCount === 1) append = ' For more insights, check out our Lifestyle section.';
         if (pCount === 3) append = ' Also, explore our <a href="technology.html">Technology</a> updates for modern trends.';
         
         let imgAppend = '';
@@ -470,7 +470,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  <div class="container">
  <ul>
  <li><a href="index.html">Home</a></li>
- <li><a href="lifestyle.html">Lifestyle</a></li>
+ <li>Lifestyle</li>
  <li><a href="entertainment.html">Entertainment</a></li>
  <li><a href="technology.html">Technology</a></li>
  <li><a href="health.html">Health</a></li>
