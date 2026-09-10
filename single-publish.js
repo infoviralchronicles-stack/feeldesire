@@ -91,6 +91,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 
         let indexContent = fs.readFileSync('index.html', 'utf8');
         const cardHtml = `
+            <!-- NEW_ARTICLE_ANCHOR -->
             <article class="post-card">
               <a href="${slug}.html" class="post-img-wrapper"><img src="${imageUrl}"></a>
               <div class="post-content">
@@ -99,8 +100,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
                 <div class="post-meta">${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
-            </article>
-            <!-- NEW_ARTICLE_ANCHOR -->`;
+            </article>`;
         indexContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
         fs.writeFileSync('index.html', indexContent);
         
@@ -117,6 +117,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
