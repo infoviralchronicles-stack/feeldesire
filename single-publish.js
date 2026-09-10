@@ -33,6 +33,19 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         text = text.replace(/```json/g, '').replace(/```/g, '').trim();
         const data = JSON.parse(text);
         data.htmlContent = data.htmlContent.replace(/^\s*<h[12][^>]*>.*?<\/h[12]>\s*/i, '');
+        
+        // Auto-inject internal links if the AI failed to add them
+        let html = data.htmlContent;
+        if (!html.includes('<a href=')) {
+            let pCount = 0;
+            html = html.replace(/<\/p>/g, (match) => {
+                pCount++;
+                if (pCount === 1) return ' For more insights, check out our <a href="lifestyle.html">Lifestyle</a> section.' + match;
+                if (pCount === 3) return ' Also, explore our <a href="technology.html">Technology</a> updates for modern trends.' + match;
+                return match;
+            });
+            data.htmlContent = html;
+        }
 
         const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
