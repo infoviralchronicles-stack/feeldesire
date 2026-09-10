@@ -124,7 +124,6 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
     <div class="container">
       <div class="header-top">
         <a href="index.html" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
-        <div class="search-bar"><a href="admin.html" style="background:#2c3e50; color:white; padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:600;">Admin Dashboard</a></div>
       </div>
     </div>
     <nav class="main-nav">
