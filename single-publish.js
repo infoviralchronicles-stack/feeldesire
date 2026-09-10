@@ -107,6 +107,13 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
 
+        const authorList = [
+          { name: "Emma Collins", slug: "author-emma-collins.html", role: "Senior Lifestyle & Architecture Editor", bio: "Emma Collins specializes in intentional living, interior ergonomics, circadian wellness, and sustainable home design.", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
+          { name: "David Thorne", slug: "author-david-thorne.html", role: "Senior Technology & Digital Infrastructure Lead", bio: "David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
+          { name: "Alex Mercer", slug: "author-alex-mercer.html", role: "Culture & Entertainment Correspondent", bio: "Alex Mercer covers cinematic milestones, streaming industry economics, digital culture movements, and modern creative arts.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" }
+        ];
+        const assignedAuthor = authorList[Math.floor(Math.random() * authorList.length)];
+
         const articleHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,10 +157,20 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
       <header class="article-header">
         <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
         <h1 class="article-title">${data.title}</h1>
-        <div class="article-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</div>
+        <div class="article-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</div>
       </header>
       <div class="article-featured-image"><img src="${imageUrl}" alt="${data.title}"></div>
       <div class="article-body">${data.htmlContent}</div>
+      <!-- Author Bio Box -->
+      <div class="author-box">
+        <img src="${assignedAuthor.avatar}" alt="${assignedAuthor.name}" class="author-box-avatar">
+        <div class="author-box-content">
+          <span class="author-box-label">Written by</span>
+          <h4 class="author-box-name"><a href="${assignedAuthor.slug}">${assignedAuthor.name}</a></h4>
+          <p class="author-box-bio">${assignedAuthor.bio}</p>
+          <a href="${assignedAuthor.slug}" class="author-box-link">View all articles by ${assignedAuthor.name} &rarr;</a>
+        </div>
+      </div>
     </article>
   </div>
   <aside class="sidebar">

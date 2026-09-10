@@ -494,7 +494,18 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  <div class="article-body">
  \${data.htmlContent}
  </div>
- </article>
+ 
+      <!-- Author Bio Box -->
+      <div class="author-box">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" alt="David Thorne" class="author-box-avatar">
+        <div class="author-box-content">
+          <span class="author-box-label">Written by</span>
+          <h4 class="author-box-name"><a href="author-david-thorne.html">David Thorne</a></h4>
+          <p class="author-box-bio">David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.</p>
+          <a href="author-david-thorne.html" class="author-box-link">View all articles by David Thorne &rarr;</a>
+        </div>
+      </div>
+    </article>
  </main>
  <footer>
  <div class="container">
@@ -513,7 +524,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
               <div class="post-content">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
-                <div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">David Thorne</span> • ${dateStr}</div>
+                <div class="post-meta">By <a href="author-david-thorne.html" class="author-link">David Thorne</a> • ${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
             </article>`;
@@ -524,7 +535,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
               <div class="sidebar-post-info">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html" class="trending-title">${data.title}</a>
-                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">Emma Collins</span> &bull; ${dateStr}</span>
+                <span class="post-meta">By <a href="author-emma-collins.html" class="author-link">Emma Collins</a> &bull; ${dateStr}</span>
               </div>
             </li>`;
  
