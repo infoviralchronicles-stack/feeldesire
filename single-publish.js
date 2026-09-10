@@ -35,9 +35,23 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         data.htmlContent = data.htmlContent.replace(/^\s*<h[12][^>]*>.*?<\/h[12]>\s*/i, '');
         
         // Auto-inject internal links if the AI failed to add them
-        let html = data.htmlContent;
-        if (!html.includes('<a href=')) {
-            let pCount = 0;
+        
+    const unsplashKey = "hFl_35GKYSCzGjcC_nZrnchqvcvTJ17FTlCHL6IK6sg";
+    const unsplashUrl = 'https://api.unsplash.com/photos/random?count=3&query=' + encodeURIComponent(keyword) + '&client_id=' + unsplashKey;
+    let images = [];
+    try {
+        const uRes = await fetch(unsplashUrl);
+        if(uRes.ok) {
+            images = await uRes.json();
+        }
+    } catch(e) { console.error(e); }
+    
+    const imageUrl = images[0] ? images[0].urls.regular : "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop";
+    const inlineImg1 = images[1] ? images[1].urls.regular : "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=500&fit=crop";
+    const inlineImg2 = images[2] ? images[2].urls.regular : "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=500&fit=crop";
+
+    let html = data.htmlContent;
+    let pCount = 0;
     html = html.replace(/<\/p>/g, (match) => {
         pCount++;
         let append = '';
@@ -45,17 +59,15 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         if (pCount === 3) append = ' Also, explore our <a href="technology.html">Technology</a> updates for modern trends.';
         
         let imgAppend = '';
-        if (pCount === 2) imgAppend = `\n<img src="https://image.pollinations.ai/prompt/${encodeURIComponent(keyword + " interior design")}?width=800&height=500&nologo=true" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="${keyword} design">`;
-        if (pCount === 5) imgAppend = `\n<img src="https://image.pollinations.ai/prompt/${encodeURIComponent(keyword + " close up high quality")}?width=800&height=500&nologo=true" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="${keyword} details">`;
+        if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
+        if (pCount === 5) imgAppend = '\n<img src="' + inlineImg2 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
         
         return append + match + imgAppend;
     });
-            data.htmlContent = html;
-        }
-
-        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    data.htmlContent = html;
+\nconst slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(keyword + " photorealistic high quality")}?width=1200&height=800&nologo=true`;
+        
 
         const articleHtml = `<!DOCTYPE html>
 <html lang="en">
