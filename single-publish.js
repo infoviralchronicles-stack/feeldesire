@@ -20,7 +20,8 @@ async function generateSingle() {
     try {
         const prompt = `You are an expert SEO magazine writer. Write a massive, highly comprehensive, and 100% SEO-optimized article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence SEO meta description", "htmlContent": "HTML body without html/body tags."}
+{"title": "Catchy title MUST contain the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 sentence SEO meta description", "htmlContent": "HTML body without html/body tags."}
+Choose the most relevant category from: Travel, Lifestyle, Technology, Health, Business, Entertainment, Fashion, Food, Trending News.
 IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 1. The article MUST be extremely long, spanning exactly between 950 and 1050 words.
 2. You MUST write at least 8 distinct sections (H2).
@@ -59,53 +60,8 @@ SEO RULES:
     const inlineImg1 = images[1] ? images[1].urls.regular : "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=500&fit=crop";
     const inlineImg2 = images[2] ? images[2].urls.regular : "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=500&fit=crop";
 
-    let html = data.htmlContent;
-    
-    // Get contextually relevant articles for internal linking
-    const idxForLinks = fs.readFileSync('index.html', 'utf8');
-    const linkRx = /<article class="post-card">[\s\S]*?<a href="([^"]+)" class="post-img-wrapper">[\s\S]*?<a href="[^"]*" class="post-category">([^<]+)<\/a>[\s\S]*?<h3 class="post-title">([^<]+)<\/h3>/g;
-    const linkArticles = [];
-    let lm;
-    while ((lm = linkRx.exec(idxForLinks)) !== null) {
-        if (lm[1] !== slug + '.html') {
-            linkArticles.push({ href: lm[1], category: lm[2].trim(), title: lm[3].trim() });
-        }
-    }
-
-    // Score relevance against current keyword/title/category
-    const kwTokens = (keyword + ' ' + (data.category || '')).toLowerCase().split(/[\s,-]+/).filter(w => w.length > 2);
-    function scoreArticle(a) {
-        let score = 0;
-        if (a.category && data.category && a.category.toLowerCase() === data.category.toLowerCase()) score += 5;
-        const targetTokens = (a.title + ' ' + a.href).toLowerCase();
-        kwTokens.forEach(token => {
-            if (targetTokens.includes(token)) score += 3;
-        });
-        return score;
-    }
-
-    linkArticles.sort((a, b) => scoreArticle(b) - scoreArticle(a));
-    const lnk1 = linkArticles[0] || { href: 'index.html', title: 'Related Insights' };
-    const lnk2 = linkArticles[1] || linkArticles[0] || { href: 'index.html', title: 'Trending Coverage' };
-
-    let pCount = 0;
-    html = html.replace(/<\/p>/g, (match) => {
-        pCount++;
-        let append = '';
-        if (pCount === 1) append = ' You might also enjoy reading <a href="' + lnk1.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk1.title + '</a>.';
-        if (pCount === 3) append = ' Discover more in <a href="' + lnk2.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk2.title + '</a>.';
-        
-        let imgAppend = '';
-        if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
-        if (pCount === 5) imgAppend = '\n<img src="' + inlineImg2 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
-        
-        return append + match + imgAppend;
-    });
-    data.htmlContent = html;
-
-const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        
 
         const authorList = [
           { name: "Emma Collins", slug: "author-emma-collins.html", role: "Senior Lifestyle & Architecture Editor", bio: "Emma Collins specializes in intentional living, interior ergonomics, circadian wellness, and sustainable home design.", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
@@ -113,6 +69,50 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
           { name: "Alex Mercer", slug: "author-alex-mercer.html", role: "Culture & Entertainment Correspondent", bio: "Alex Mercer covers cinematic milestones, streaming industry economics, digital culture movements, and modern creative arts.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" }
         ];
         const assignedAuthor = authorList[Math.floor(Math.random() * authorList.length)];
+
+        let html = data.htmlContent;
+        
+        // Get contextually relevant articles for internal linking
+        const idxForLinks = fs.readFileSync('index.html', 'utf8');
+        const linkRx = /<article class="post-card">[\s\S]*?<a href="([^"]+)" class="post-img-wrapper">[\s\S]*?<a href="[^"]*" class="post-category">([^<]+)<\/a>[\s\S]*?<h3 class="post-title">([^<]+)<\/h3>/g;
+        const linkArticles = [];
+        let lm;
+        while ((lm = linkRx.exec(idxForLinks)) !== null) {
+            if (lm[1] !== slug + '.html') {
+                linkArticles.push({ href: lm[1], category: lm[2].trim(), title: lm[3].trim() });
+            }
+        }
+
+        // Score relevance against current keyword/title/category
+        const kwTokens = (keyword + ' ' + (data.category || '')).toLowerCase().split(/[\s,-]+/).filter(w => w.length > 2);
+        function scoreArticle(a) {
+            let score = 0;
+            if (a.category && data.category && a.category.toLowerCase() === data.category.toLowerCase()) score += 5;
+            const targetTokens = (a.title + ' ' + a.href).toLowerCase();
+            kwTokens.forEach(token => {
+                if (targetTokens.includes(token)) score += 3;
+            });
+            return score;
+        }
+
+        linkArticles.sort((a, b) => scoreArticle(b) - scoreArticle(a));
+        const lnk1 = linkArticles[0] || { href: 'index.html', title: 'Related Insights' };
+        const lnk2 = linkArticles[1] || linkArticles[0] || { href: 'index.html', title: 'Trending Coverage' };
+
+        let pCount = 0;
+        html = html.replace(/<\/p>/g, (match) => {
+            pCount++;
+            let append = '';
+            if (pCount === 1) append = ' You might also enjoy reading <a href="' + lnk1.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk1.title + '</a>.';
+            if (pCount === 3) append = ' Discover more in <a href="' + lnk2.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk2.title + '</a>.';
+            
+            let imgAppend = '';
+            if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
+            if (pCount === 5) imgAppend = '\n<img src="' + inlineImg2 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
+            
+            return append + match + imgAppend;
+        });
+        data.htmlContent = html;
 
         const articleHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -343,7 +343,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
               <div class="post-content">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
-                <div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</div>
+                <div class="post-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
             </article>`;
@@ -355,7 +355,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
               <div class="sidebar-post-info">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html" class="trending-title">${data.title}</a>
-                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</span>
+                <span class="post-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</span>
               </div>
             </li>`;
 
@@ -371,7 +371,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
 
   console.log("Pushing to GitHub...");
   execSync('git add .');
-  execSync('git commit -m "Publish buy laptop article without year and fix admin prompt"');
+  execSync(`git commit -m "Publish article: ${keyword}"`);
   execSync('git push origin main');
   console.log("Done!");
 }
