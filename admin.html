@@ -247,10 +247,18 @@
  try {
  showLog("Writing article using AI...");
  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${keys.geminiKey}`;
- const prompt = `You are an expert SEO magazine writer. Write a comprehensive, engaging article about "${keyword}".
+ const prompt = `You are an expert SEO magazine writer. Write a highly comprehensive, engaging, and 100% SEO-optimized article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence", "htmlContent": "HTML body (<p>, <h2>, etc) without html/body tags. DO NOT include the main article title as an <h1> or <h2> at the beginning of the htmlContent."}
-IMPORTANT: DO NOT include the current year in the title or the content. Also, include exactly 2 internal HTML links (<a> tags) pointing to other pages like "technology.html" or "lifestyle.html". Put the first link in the first paragraph, and the second link in a middle paragraph. Use natural anchor text.`;
+{"title": "SEO friendly Catchy title that MUST contain the exact keyword \"${keyword}\"", "category": "Technology", "excerpt": "1 sentence highly SEO optimized meta description", "htmlContent": "HTML body without html/body tags."}
+IMPORTANT SEO RULES: 
+1. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>). 
+2. Use LSI and related keywords naturally throughout the text.
+3. Structure the article with proper H2 and H3 tags containing variations of the keyword. 
+4. Include bulleted lists for readability.
+5. Provide high value, deeply informative content. 
+6. Do NOT include the current year anywhere. 
+7. Do NOT include an H1 tag (the title acts as H1). 
+8. Include exactly 2 internal HTML links (<a> tags) pointing to other pages like 'technology.html' or 'lifestyle.html' with natural anchor text. First link in the first paragraph, second in a middle paragraph.`;
  
     let response;
    let retries = 3;

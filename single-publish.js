@@ -12,7 +12,7 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
 async function generateSingle() {
-    const keyword = "buy bed";
+    const keyword = process.argv[2] || "smart phone";
     const cat = "Lifestyle";
     
     console.log(`Generating: ${keyword}...`);
