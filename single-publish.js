@@ -106,7 +106,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         
         console.log(`   Saved ${slug}.html`);
     } catch (e) {
-        console.error("Error generating", keyword, e.message);
+        console.error("Error generating", keyword, e.message); throw e;
     }
 
   console.log("Pushing to GitHub...");
@@ -117,6 +117,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
