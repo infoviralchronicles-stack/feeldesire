@@ -821,3 +821,17 @@ header {
 .latest-articles .post-img-wrapper img {
   aspect-ratio: auto;
 }
+
+/* Image Captions */
+.article-body figure {
+  margin: 30px 0;
+  text-align: center;
+}
+.article-body figcaption {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.5;
+}
