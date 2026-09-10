@@ -118,9 +118,12 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
         const sidebarHtml = `
             <!-- NEW_TRENDING_ANCHOR -->
             <li>
-              <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-              <a href="${slug}.html" class="trending-title">${data.title}</a>
-              <span class="post-meta">${dateStr}</span>
+              <a href="${slug}.html"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
+              <div class="sidebar-post-info">
+                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+                <a href="${slug}.html" class="trending-title">${data.title}</a>
+                <span class="post-meta">${dateStr}</span>
+              </div>
             </li>`;
 
         indexContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
