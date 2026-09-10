@@ -60,12 +60,24 @@ SEO RULES:
     const inlineImg2 = images[2] ? images[2].urls.regular : "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=500&fit=crop";
 
     let html = data.htmlContent;
+    
+    // Get random articles for internal linking
+    const idxForLinks = fs.readFileSync('index.html', 'utf8');
+    const linkRx = /<a href="([^"]+)"[^>]*><h3 class="post-title">([^<]+)<\/h3><\/a>/g;
+    const linkArticles = [];
+    let lm;
+    while ((lm = linkRx.exec(idxForLinks)) !== null) {
+        if (lm[1] !== slug + '.html') linkArticles.push({ href: lm[1], title: lm[2] });
+    }
+    const lnk1 = linkArticles[Math.floor(Math.random() * linkArticles.length)] || { href: 'index.html', title: 'our homepage' };
+    const lnk2 = linkArticles[Math.floor(Math.random() * linkArticles.length)] || { href: 'index.html', title: 'trending articles' };
+
     let pCount = 0;
     html = html.replace(/<\/p>/g, (match) => {
         pCount++;
         let append = '';
-        if (pCount === 1) append = ' For more insights, check out our <a href="lifestyle.html">Lifestyle</a> section.';
-        if (pCount === 3) append = ' Also, explore our <a href="technology.html">Technology</a> updates for modern trends.';
+        if (pCount === 1) append = ' You might also enjoy reading <a href="' + lnk1.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk1.title + '</a>.';
+        if (pCount === 3) append = ' Discover more in <a href="' + lnk2.href + '" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">' + lnk2.title + '</a>.';
         
         let imgAppend = '';
         if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
