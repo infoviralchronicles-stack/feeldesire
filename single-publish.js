@@ -110,7 +110,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
               <div class="post-content">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
-                <div class="post-meta">${dateStr}</div>
+                <div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
             </article>`;
@@ -122,7 +122,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
               <div class="sidebar-post-info">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
                 <a href="${slug}.html" class="trending-title">${data.title}</a>
-                <span class="post-meta">${dateStr}</span>
+                <span class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">${["Emma Collins", "David Thorne", "Alex Mercer"][Math.floor(Math.random()*3)]}</span> &bull; ${dateStr}</span>
               </div>
             </li>`;
 
