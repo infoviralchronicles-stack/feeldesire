@@ -63,8 +63,9 @@ const newSections = `
 `;
 
 // Replace the main-content inner HTML
-const mainContentRegex = /(<div class="main-content">)[\s\S]*?(<\/div>\s*<aside class="sidebar">)/;
+const mainContentRegex = /(<div class="content-area">)[\s\S]*?(<\/div>\s*<!-- Right Column: Sidebar -->\s*<aside class="sidebar">)/;
 html = html.replace(mainContentRegex, `$1\n${newSections}\n$2`);
 
 fs.writeFileSync('index.html', html);
 console.log('Homepage redesigned successfully!');
+
