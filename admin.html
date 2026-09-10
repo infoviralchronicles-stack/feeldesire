@@ -477,7 +477,7 @@ IMPORTANT: DO NOT include the current year in the title or the content. Also, in
             <li>
               <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
               <a href="${slug}.html" class="trending-title">${data.title}</a>
-              <span class="post-meta">Just now</span>
+              <span class="post-meta">${dateStr}</span>
             </li>`;
  
  let newContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
@@ -486,6 +486,7 @@ IMPORTANT: DO NOT include the current year in the title or the content. Also, in
  </script>
 </body>
 </html>
+
 
 
 

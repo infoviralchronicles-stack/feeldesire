@@ -114,7 +114,17 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
             </article>`;
+            
+        const sidebarHtml = `
+            <!-- NEW_TRENDING_ANCHOR -->
+            <li>
+              <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+              <a href="${slug}.html" class="trending-title">${data.title}</a>
+              <span class="post-meta">${dateStr}</span>
+            </li>`;
+
         indexContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
+        indexContent = indexContent.replace('<!-- NEW_TRENDING_ANCHOR -->', sidebarHtml);
         fs.writeFileSync('index.html', indexContent);
         require('child_process').execSync('node rebuild-categories.js');
         
@@ -131,6 +141,7 @@ IMPORTANT: DO NOT include the current year (like 2026) in the title or the conte
 }
 
 async function run() { let success = false; while(!success) { try { await generateSingle(); success=true; } catch(e) { console.log("Retrying in 45s..."); await new Promise(r => setTimeout(r, 45000)); } } } run();
+
 
 
 
