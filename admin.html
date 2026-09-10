@@ -268,7 +268,7 @@ IMPORTANT: DO NOT include the current year in the title or the content. Also, in
        console.error(aiData);
        throw new Error("Invalid response from Gemini API.");
    }
-   let text = aiData.candidates[0].content.parts[0].text.replace(/`json/g, '').replace(/`/g, '').trim();
+   let text = aiData.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim();
    let data;
    try {
        data = JSON.parse(text);
