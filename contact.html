@@ -35,14 +35,71 @@
  </nav>
  </header>
 
- <main class="container" style="padding: 60px 0;">
- <div style="max-width: 800px; margin: 0 auto;">
- <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #c0392b; padding-bottom: 10px;">Contact Us</h1>
- <div style="font-size: 1.1rem; line-height: 1.8; color: #444;">
- <p>Have a question or feedback? We would love to hear from you.</p><form><input type="text" placeholder="Name" style="width:100%; padding:10px; margin-bottom:10px;" required><input type="email" placeholder="Email" style="width:100%; padding:10px; margin-bottom:10px;" required><textarea placeholder="Message" style="width:100%; padding:10px; margin-bottom:10px; min-height:100px;" required></textarea><button type="submit" style="background:#c0392b; color:white; padding:10px 20px; border:none; cursor:pointer;">Send Message</button></form>
- </div>
- </div>
- </main>
+   <main class="container" style="padding: 60px 0;">
+    <div style="max-width: 860px; margin: 0 auto;">
+      <div style="margin-bottom: 35px; border-bottom: 2px solid var(--accent-color); padding-bottom: 15px;">
+        <span style="text-transform: uppercase; font-size: 0.85rem; font-weight: 600; color: var(--accent-color); letter-spacing: 1px;">Get in Touch</span>
+        <h1 style="font-family: var(--font-heading); font-size: 2.8rem; color: var(--primary-color); margin-top: 8px;">Contact Us</h1>
+        <p style="color: #64748b; font-size: 0.95rem; margin-top: 6px;">Have a story tip, editorial question, or partnership inquiry? We are here to listen.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--primary-color); margin-bottom: 15px;">Editorial Newsroom</h2>
+          <p style="color: #475569; font-size: 1rem; line-height: 1.7; margin-bottom: 20px;">We welcome pitches, reader feedback, factual corrections, and press releases from innovators, designers, and thinkers worldwide.</p>
+          
+          <div style="margin-bottom: 15px;">
+            <strong style="display:block; font-size:0.85rem; text-transform:uppercase; color:#94a3b8; letter-spacing:0.5px;">General News Desk</strong>
+            <a href="mailto:editorial@feeldesire.com" style="color:var(--accent-color); font-weight:600; font-size:1.05rem;">editorial@feeldesire.com</a>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <strong style="display:block; font-size:0.85rem; text-transform:uppercase; color:#94a3b8; letter-spacing:0.5px;">Press & Media Inquiries</strong>
+            <a href="mailto:press@feeldesire.com" style="color:var(--accent-color); font-weight:600; font-size:1.05rem;">press@feeldesire.com</a>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <strong style="display:block; font-size:0.85rem; text-transform:uppercase; color:#94a3b8; letter-spacing:0.5px;">Advertising & Partnerships</strong>
+            <a href="mailto:advertise@feeldesire.com" style="color:var(--accent-color); font-weight:600; font-size:1.05rem;">advertise@feeldesire.com</a>
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin-top: 25px;">
+            <h4 style="font-family: var(--font-heading); font-size: 1.05rem; color: var(--primary-color); margin-bottom: 6px;">Editorial Office</h4>
+            <p style="color: #64748b; font-size: 0.9rem; line-height: 1.6; margin: 0;">FeelDesire Media Group<br>Grand Central Media Tower, Suite 480<br>New York, NY 10017, United States</p>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; padding: 30px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+          <h2 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-color); margin-bottom: 15px;">Send a Direct Message</h2>
+          <form onsubmit="event.preventDefault(); alert('Thank you! Your message has been received by our editorial desk.'); this.reset();">
+            <div style="margin-bottom: 15px;">
+              <label style="display:block; font-size: 0.85rem; font-weight:600; color:#334155; margin-bottom: 6px;">Full Name *</label>
+              <input type="text" placeholder="e.g. Eleanor Vance" required style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.95rem; outline:none; font-family:inherit;">
+            </div>
+            <div style="margin-bottom: 15px;">
+              <label style="display:block; font-size: 0.85rem; font-weight:600; color:#334155; margin-bottom: 6px;">Email Address *</label>
+              <input type="email" placeholder="e.g. eleanor@example.com" required style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.95rem; outline:none; font-family:inherit;">
+            </div>
+            <div style="margin-bottom: 15px;">
+              <label style="display:block; font-size: 0.85rem; font-weight:600; color:#334155; margin-bottom: 6px;">Inquiry Topic *</label>
+              <select style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.95rem; outline:none; font-family:inherit; background:white;">
+                <option value="editorial">Editorial Feedback / Story Pitch</option>
+                <option value="advertising">Advertising & Brand Collaboration</option>
+                <option value="press">Press & Media Relations</option>
+                <option value="technical">Technical Support / Bug Report</option>
+                <option value="other">Other Inquiries</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <label style="display:block; font-size: 0.85rem; font-weight:600; color:#334155; margin-bottom: 6px;">Message *</label>
+              <textarea placeholder="Share your message, feedback, or inquiry in detail..." required style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.95rem; outline:none; font-family:inherit; min-height:120px; resize:vertical;"></textarea>
+            </div>
+            <button type="submit" style="width:100%; background:var(--accent-color); color:white; padding:14px; border:none; border-radius:6px; font-size:1rem; font-weight:600; cursor:pointer; transition: background 0.2s;">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
 
    <footer>
     <div class="container">
