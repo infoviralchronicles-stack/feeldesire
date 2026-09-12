@@ -1,11 +1,26 @@
 const fs = require('fs');
 
+const allCategorySlugs = [
+    'lifestyle',
+    'entertainment',
+    'technology',
+    'health',
+    'travel',
+    'business',
+    'fashion',
+    'food',
+    'trending-news'
+];
+
 const indexHtml = fs.readFileSync('index.html', 'utf8');
 
 // Regex to extract all post cards
 const cardRegex = /<article class="post-card">[\s\S]*?<\/article>/g;
 let match;
 const categories = {};
+for (const slug of allCategorySlugs) {
+    categories[slug] = [];
+}
 
 while ((match = cardRegex.exec(indexHtml)) !== null) {
     const cardHtml = match[0];
@@ -13,11 +28,10 @@ while ((match = cardRegex.exec(indexHtml)) !== null) {
     // Extract category name
     const catMatch = cardHtml.match(/class="post-category">([^<]+)<\/a>/);
     if (catMatch) {
-        const catName = catMatch[1].trim().toLowerCase().replace(' ', '-'); // e.g. "lifestyle" or "trending-news"
-        if (!categories[catName]) {
-            categories[catName] = [];
+        const catName = catMatch[1].trim().toLowerCase().replace(' ', '-');
+        if (categories[catName]) {
+            categories[catName].push(cardHtml);
         }
-        categories[catName].push(cardHtml);
     }
 }
 
@@ -30,7 +44,10 @@ for (const [catName, cards] of Object.entries(categories)) {
         // Find the post-grid div and replace its contents
         const gridRegex = /(<div class="post-grid">)[\s\S]*?(<\/main>)/;
         if (gridRegex.test(catHtml)) {
-            const newGridContent = `$1\n${cards.join('\n')}\n</div>\n$2`;
+            const content = cards.length > 0 
+                ? cards.join('\n') 
+                : '<div style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; color: #64748b;"><p style="font-size: 1.2rem; margin-bottom: 10px;">New stories in this category are coming soon.</p><p style="font-size: 0.95rem;">Stay tuned for expert reviews, guides, and updates.</p></div>';
+            const newGridContent = `$1\n${content}\n</div>\n$2`;
             catHtml = catHtml.replace(gridRegex, newGridContent);
             fs.writeFileSync(filename, catHtml);
             console.log(`Updated ${filename} with ${cards.length} articles.`);

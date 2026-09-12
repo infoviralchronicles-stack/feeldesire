@@ -4,94 +4,80 @@ const path = require('path');
 // Manually curated mapping of core SEO topics and natural anchor keywords for site articles
 const TOPIC_REGISTRY = [
     {
-        href: 'the-ultimate-laptop-buyer-s-guide-how-to-find-your-perfect-match.html',
-        category: 'Technology',
-        keywords: ["laptop buyer's guide", "laptop buyers guide", "laptop buyer", "laptop models", "buying a laptop", "personal computing device"]
+        "href": "ultimate-guide-to-healthy-morning-breakfast-recipes-for-vitality.html",
+        "category": "Food",
+        "keywords": [
+            "healthy morning breakfast recipes",
+            "healthy breakfast recipes",
+            "morning breakfast recipes",
+            "morning nutrition",
+            "healthy morning breakfast"
+        ]
     },
     {
-        href: 'the-ultimate-guide-to-choosing-the-perfect-laptop-for-work-and-gaming.html',
-        category: 'Technology',
-        keywords: ["laptop for work and gaming", "gaming laptop", "work laptop", "mobile workstations", "laptop setups"]
+        "href": "ultimate-vacation-guide-to-the-top-travel-destinations-around-the-globe.html",
+        "category": "Travel",
+        "keywords": [
+            "top travel destinations",
+            "vacation destinations",
+            "travel destinations",
+            "vacation guide",
+            "travel planning"
+        ]
     },
     {
-        href: 'the-ultimate-guide-to-smart-home-gadgets-elevating-modern-living.html',
-        category: 'Technology',
-        keywords: ["smart home gadgets", "smart home devices", "home automation", "ambient temperature controls"]
+        "href": "how-to-start-a-travel-blog-and-build-a-successful-digital-business.html",
+        "category": "Travel",
+        "keywords": [
+            "start a travel blog",
+            "travel blog",
+            "digital business",
+            "monetization strategies",
+            "travel blogging"
+        ]
     },
     {
-        href: 'the-ultimate-guide-to-buy-iphone-how-to-choose-the-right-model-for-your-needs.html',
-        category: 'Technology',
-        keywords: ["buy iPhone", "iPhone models", "Apple smartphones", "Pro iPhone"]
+        "href": "the-ultimate-guide-to-finding-the-best-noise-cancelling-headphones.html",
+        "category": "Travel",
+        "keywords": [
+            "best noise cancelling headphones",
+            "noise cancelling headphones",
+            "auditory comfort",
+            "audio quality",
+            "headphones"
+        ]
     },
     {
-        href: 'how-to-choose-the-ultimate-smart-phone-for-your-modern-lifestyle.html',
-        category: 'Lifestyle',
-        keywords: ["smart phone", "smartphone", "mobile devices", "handheld devices"]
+        "href": "the-ultimate-guide-to-choosing-the-perfect-laptop-for-work-and-gaming.html",
+        "category": "Technology",
+        "keywords": [
+            "laptop for work and gaming",
+            "gaming laptop",
+            "work laptop",
+            "laptop setups",
+            "choosing the perfect laptop"
+        ]
     },
     {
-        href: 'beyond-the-bit-how-quantum-computing-is-rewriting-the-future-of-technology.html',
-        category: 'Technology',
-        keywords: ["quantum computing", "quantum systems", "next-generation computing"]
+        "href": "ultimate-guide-to-booking-chicago-to-houston-flights-airlines-airports-and-deals.html",
+        "category": "Travel",
+        "keywords": [
+            "chicago to houston flights",
+            "booking flights",
+            "airline options",
+            "direct flights",
+            "flight deals"
+        ]
     },
     {
-        href: 'beyond-the-chatbot-the-breakthrough-ai-innovations-defining-2026.html',
-        category: 'Technology',
-        keywords: ["AI innovations", "artificial intelligence", "generative AI"]
-    },
-    {
-        href: 'the-complete-guide-to-buy-bed-furniture-that-guarantees-restful-sleep.html',
-        category: 'Lifestyle',
-        keywords: ["buy bed furniture", "buy bed frames", "bed frame", "supportive mattress", "sleep setups"]
-    },
-    {
-        href: 'the-ultimate-shopping-guide-how-to-buy-bed-designs-for-dreamy-sleep.html',
-        category: 'Lifestyle',
-        keywords: ["buy bed designs", "bed designs", "bedroom furniture", "bedroom dimensions"]
-    },
-    {
-        href: 'the-sanctuary-within-how-the-modern-shower-evolved-into-a-daily-spa-experience.html',
-        category: 'Lifestyle',
-        keywords: ["modern shower", "shower experience", "daily spa experience"]
-    },
-    {
-        href: 'transform-your-daily-routine-the-ultimate-guide-to-upgrading-your-bathroom-shower.html',
-        category: 'Lifestyle',
-        keywords: ["bathroom shower upgrade", "upgrading your bathroom", "bathroom shower"]
-    },
-    {
-        href: 'the-ultimate-guide-to-choosing-the-perfect-bathroom-sink-for-your-home.html',
-        category: 'Lifestyle',
-        keywords: ["bathroom sink", "choosing a bathroom sink", "sink design"]
-    },
-    {
-        href: 'the-art-of-less-how-minimalist-living-can-unlock-your-best-life.html',
-        category: 'Lifestyle',
-        keywords: ["minimalist living", "minimalism", "decluttering your space"]
-    },
-    {
-        href: 'master-your-am-5-high-impact-morning-habits-for-peak-productivity-and-peace.html',
-        category: 'Lifestyle',
-        keywords: ["morning habits", "morning productivity", "morning wellness"]
-    },
-    {
-        href: 'mastering-the-sunrise-5-transformative-morning-routine-habits-for-peak-energy-and-focus.html',
-        category: 'Lifestyle',
-        keywords: ["morning routine", "morning routine habits", "peak energy"]
-    },
-    {
-        href: 'ultimate-guide-to-booking-chicago-to-houston-flights-airlines-airports-and-deals.html',
-        category: 'Travel',
-        keywords: ["chicago to houston flights", "booking flights", "airline options", "direct flights"]
-    },
-    {
-        href: 'marvel-s-2026-blockbuster-slate-doctor-doom-spider-man-and-the-multiverse-s-highest-stakes.html',
-        category: 'Entertainment',
-        keywords: ["blockbuster slate", "Marvel Cinematic Universe", "MCU blockbusters"]
-    },
-    {
-        href: 'binge-worthy-beats-the-top-netflix-shows-you-need-to-stream-right-now.html',
-        category: 'Entertainment',
-        keywords: ["top Netflix shows", "streaming industry", "binge-worthy shows"]
+        "href": "the-ultimate-guide-to-smart-home-gadgets-elevating-modern-living.html",
+        "category": "Technology",
+        "keywords": [
+            "smart home gadgets",
+            "smart home devices",
+            "home automation",
+            "modern living gadgets"
+        ]
     }
 ];
 
