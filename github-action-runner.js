@@ -164,7 +164,8 @@ SEO RULES:
   <header>
     <div class="container">
       <div class="header-top">
-        <a href="index.html" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
+        <a href="/" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
+        <button class="mobile-menu-btn" aria-label="Toggle Navigation">☰</button>
       </div>
     </div>
     <nav class="main-nav">
