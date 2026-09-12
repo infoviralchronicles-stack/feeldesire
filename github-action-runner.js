@@ -115,6 +115,50 @@ SEO RULES:
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <meta name="description" content="${data.excerpt.replace(/"/g, '&quot;')}">
+  <link rel="canonical" href="https://feeldesire.com/${slug}">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://feeldesire.com/${slug}">
+  <meta property="og:site_name" content="FeelDesire">
+  <meta property="og:title" content="${data.title} - FeelDesire">
+  <meta property="og:description" content="${data.excerpt.replace(/"/g, '&quot;')}">
+  <meta property="og:image" content="${imageUrl}">
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://feeldesire.com/${slug}">
+  <meta name="twitter:title" content="${data.title} - FeelDesire">
+  <meta name="twitter:description" content="${data.excerpt.replace(/"/g, '&quot;')}">
+  <meta name="twitter:image" content="${imageUrl}">
+  <!-- Structured Data JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "${data.title.replace(/"/g, '\\"')}",
+  "image": ["${imageUrl}"],
+  "datePublished": "${new Date().toISOString().split('T')[0]}",
+  "dateModified": "${new Date().toISOString().split('T')[0]}",
+  "author": [{
+    "@type": "Person",
+    "name": "${assignedAuthor.name}"
+  }],
+  "publisher": {
+    "@type": "Organization",
+    "name": "FeelDesire",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://feeldesire.com/logo.svg"
+    }
+  },
+  "description": "${data.excerpt.replace(/"/g, '\\"')}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://feeldesire.com/${slug}"
+  }
+}
+  </script>
 </head>
 <body>
   <header>
@@ -293,9 +337,10 @@ SEO RULES:
     indexContent = indexContent.replace('<!-- NEW_TRENDING_ANCHOR -->', sidebarHtml);
     fs.writeFileSync('index.html', indexContent);
 
-    // Rebuild categories
+    // Rebuild categories and sitemap
     require('child_process').execSync('node rebuild-categories.js');
-    console.log(`[Auto-Publish] Successfully published: ${slug}.html`);
+    require('child_process').execSync('node generate-sitemap.js');
+    console.log(`[Auto-Publish] Successfully published: ${slug}.html and updated sitemap`);
 }
 
 async function run() {
