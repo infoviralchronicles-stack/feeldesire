@@ -145,7 +145,8 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
                 const wordRx = new RegExp(`\\b(${escaped})\\b`, 'i');
 
                 if (wordRx.test(p)) {
-                    const newP = p.replace(wordRx, `<a href="${article.href}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">$1</a>`);
+                    const cleanHref = article.href.replace(/\.html$/, '');
+                    const newP = p.replace(wordRx, `<a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">$1</a>`);
                     if (newP !== p) {
                         modifiedHtml = modifiedHtml.replace(p, newP);
                         usedHrefs.add(article.href);

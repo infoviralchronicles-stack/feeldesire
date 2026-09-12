@@ -91,7 +91,7 @@
  <main class="main">
  <div class="topbar">
  <h2 id="topbar-title">AI Publish</h2>
- <a href="index.html" target="_blank">View Live Site ↗</a>
+ <a href="/" target="_blank">View Live Site ↗</a>
  </div>
 
  <div class="content-area">
@@ -309,7 +309,7 @@ SEO RULES:
         pCount++;
         let append = '';
         if (pCount === 1) append = ' For more insights, check out our Lifestyle section.';
-        if (pCount === 3) append = ' Also, explore our <a href="technology.html">Technology</a> updates for modern trends.';
+        if (pCount === 3) append = ' Also, explore our <a href="technology">Technology</a> updates for modern trends.';
         
         let imgAppend = '';
         if (pCount === 2) imgAppend = '\n<img src="' + inlineImg1 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
@@ -462,23 +462,23 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  <header>
  <div class="container">
  <div class="header-top">
- <a href="index.html" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
+ <a href="/" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
  <button class="mobile-menu-btn" aria-label="Toggle Navigation">&#9776;</button>
  </div>
  </div>
  <nav class="main-nav">
  <div class="container">
  <ul>
- <li><a href="index.html">Home</a></li>
+ <li><a href="/">Home</a></li>
  <li>Lifestyle</li>
- <li><a href="entertainment.html">Entertainment</a></li>
- <li><a href="technology.html">Technology</a></li>
- <li><a href="health.html">Health</a></li>
- <li><a href="travel.html">Travel</a></li>
- <li><a href="business.html">Business</a></li>
- <li><a href="fashion.html">Fashion</a></li>
- <li><a href="food.html">Food</a></li>
- <li><a href="trending-news.html">Trending News</a></li>
+ <li><a href="entertainment">Entertainment</a></li>
+ <li><a href="technology">Technology</a></li>
+ <li><a href="health">Health</a></li>
+ <li><a href="travel">Travel</a></li>
+ <li><a href="business">Business</a></li>
+ <li><a href="fashion">Fashion</a></li>
+ <li><a href="food">Food</a></li>
+ <li><a href="trending-news">Trending News</a></li>
  </ul>
  </div>
  </nav>
@@ -486,7 +486,7 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  <main class="container">
  <article>
  <header class="article-header">
- <a href="\${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">\${data.category}</a>
+ <a href="\${data.category.toLowerCase().replace(' ', '-')}" class="post-category">\${data.category}</a>
  <h1 class="article-title">\${data.title}</h1>
  <div class="article-meta">By <a href="#"><strong>AI Editor</strong></a> | \${dateStr} | 5 min read</div>
  </header>
@@ -500,9 +500,9 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
         <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" alt="David Thorne" class="author-box-avatar">
         <div class="author-box-content">
           <span class="author-box-label">Written by</span>
-          <h4 class="author-box-name"><a href="author-david-thorne.html">David Thorne</a></h4>
+          <h4 class="author-box-name"><a href="author-david-thorne">David Thorne</a></h4>
           <p class="author-box-bio">David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.</p>
-          <a href="author-david-thorne.html" class="author-box-link">View all articles by David Thorne &rarr;</a>
+          <a href="author-david-thorne" class="author-box-link">View all articles by David Thorne &rarr;</a>
         </div>
       </div>
     </article>
@@ -520,22 +520,22 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  function updateIndexHtml(indexContent, data, slug, dateStr, imageUrl) {
  const cardHtml = `<!-- NEW_ARTICLE_ANCHOR -->
             <article class="post-card">
-              <a href="${slug}.html" class="post-img-wrapper"><img src="${imageUrl}"></a>
+              <a href="${slug}" class="post-img-wrapper"><img src="${imageUrl}"></a>
               <div class="post-content">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-                <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
-                <div class="post-meta">By <a href="author-david-thorne.html" class="author-link">David Thorne</a> • ${dateStr}</div>
+                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
+                <a href="${slug}"><h3 class="post-title">${data.title}</h3></a>
+                <div class="post-meta">By <a href="author-david-thorne" class="author-link">David Thorne</a> • ${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
             </article>`;
 
  const trendingHtml = `<!-- NEW_TRENDING_ANCHOR -->
             <li>
-              <a href="${slug}.html"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
+              <a href="${slug}"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
               <div class="sidebar-post-info">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-                <a href="${slug}.html" class="trending-title">${data.title}</a>
-                <span class="post-meta">By <a href="author-emma-collins.html" class="author-link">Emma Collins</a> &bull; ${dateStr}</span>
+                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
+                <a href="${slug}" class="trending-title">${data.title}</a>
+                <span class="post-meta">By <a href="author-emma-collins" class="author-link">Emma Collins</a> &bull; ${dateStr}</span>
               </div>
             </li>`;
  

@@ -126,16 +126,16 @@ SEO RULES:
     <nav class="main-nav">
       <div class="container">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="lifestyle.html">Lifestyle</a></li>
-          <li><a href="entertainment.html">Entertainment</a></li>
-          <li><a href="technology.html">Technology</a></li>
-          <li><a href="health.html">Health</a></li>
-          <li><a href="travel.html">Travel</a></li>
-          <li><a href="business.html">Business</a></li>
-          <li><a href="fashion.html">Fashion</a></li>
-          <li><a href="food.html">Food</a></li>
-          <li><a href="trending-news.html">Trending News</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="lifestyle">Lifestyle</a></li>
+          <li><a href="entertainment">Entertainment</a></li>
+          <li><a href="technology">Technology</a></li>
+          <li><a href="health">Health</a></li>
+          <li><a href="travel">Travel</a></li>
+          <li><a href="business">Business</a></li>
+          <li><a href="fashion">Fashion</a></li>
+          <li><a href="food">Food</a></li>
+          <li><a href="trending-news">Trending News</a></li>
         </ul>
       </div>
     </nav>
@@ -145,7 +145,7 @@ SEO RULES:
   <div class="article-main">
     <article>
       <header class="article-header">
-        <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
+        <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
         <h1 class="article-title">${data.title}</h1>
         <div class="article-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</div>
       </header>
@@ -178,7 +178,7 @@ SEO RULES:
     <div class="container">
       <div class="footer-content">
         <div>
-          <a href="index.html" class="logo footer-logo"><img src="logo-white.svg" alt="FeelDesire"></a>
+          <a href="/" class="logo footer-logo"><img src="logo-white.svg" alt="FeelDesire"></a>
           <p class="footer-desc">Your daily destination for cutting-edge lifestyle trends, tech innovations, health insights, and global stories. Curated for modern living.</p>
           <div class="footer-socials">
             <a href="https://twitter.com" target="_blank" rel="noopener" class="footer-social-link" aria-label="Twitter">
@@ -195,22 +195,22 @@ SEO RULES:
         <div>
           <h4 class="footer-title">Categories</h4>
           <ul class="footer-links">
-            <li><a href="lifestyle.html">Lifestyle</a></li>
-            <li><a href="technology.html">Technology</a></li>
-            <li><a href="health.html">Health</a></li>
-            <li><a href="travel.html">Travel</a></li>
-            <li><a href="entertainment.html">Entertainment</a></li>
-            <li><a href="trending-news.html">Trending News</a></li>
+            <li><a href="lifestyle">Lifestyle</a></li>
+            <li><a href="technology">Technology</a></li>
+            <li><a href="health">Health</a></li>
+            <li><a href="travel">Travel</a></li>
+            <li><a href="entertainment">Entertainment</a></li>
+            <li><a href="trending-news">Trending News</a></li>
           </ul>
         </div>
         <div>
           <h4 class="footer-title">Company</h4>
           <ul class="footer-links">
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="our-story.html">Our Story</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="advertise.html">Advertise</a></li>
-            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="about-us">About Us</a></li>
+            <li><a href="our-story">Our Story</a></li>
+            <li><a href="contact">Contact Us</a></li>
+            <li><a href="advertise">Advertise</a></li>
+            <li><a href="privacy-policy">Privacy Policy</a></li>
           </ul>
         </div>
         <div class="footer-newsletter">
@@ -225,9 +225,9 @@ SEO RULES:
       <div class="footer-bottom">
         <p>&copy; 2026 FeelDesire. All Rights Reserved.</p>
         <div class="footer-bottom-links">
-          <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="contact.html">Terms of Service</a>
-          <a href="about-us.html">Editorial Guidelines</a>
+          <a href="privacy-policy">Privacy Policy</a>
+          <a href="contact">Terms of Service</a>
+          <a href="about-us">Editorial Guidelines</a>
         </div>
       </div>
     </div>
@@ -244,12 +244,15 @@ SEO RULES:
     const allArticles = [];
     let cm;
     while ((cm = cardRx.exec(idxHtml)) !== null) {
-        allArticles.push({ href: cm[1], image: cm[2], category: cm[3].trim(), title: cm[4].trim(), author: cm[5].trim(), date: cm[6].trim() });
+        const cleanHref = cm[1].replace(/\.html$/, '');
+        allArticles.push({ href: cleanHref, image: cm[2], category: cm[3].trim(), title: cm[4].trim(), author: cm[5].trim(), date: cm[6].trim() });
     }
-    const related = allArticles.filter(a => a.category === data.category && a.href !== slug + '.html').slice(0, 3);
-    const latest = allArticles.filter(a => a.href !== slug + '.html').slice(0, 4);
+    const cleanSlug = slug.replace(/\.html$/, '');
+    const related = allArticles.filter(a => a.category === data.category && a.href !== cleanSlug).slice(0, 3);
+    const latest = allArticles.filter(a => a.href !== cleanSlug).slice(0, 4);
     function mkCard(a) {
-        return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '"></a><div class="post-content"><a href="' + a.category.toLowerCase().replace(' ', '-') + '.html" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
+        const catSlug = a.category.toLowerCase().replace(' ', '-');
+        return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '"></a><div class="post-content"><a href="' + catSlug + '" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
     }
     let sectionsHtml = '';
     if (related.length > 0) {
@@ -266,10 +269,10 @@ SEO RULES:
     const cardHtml = `
             <!-- NEW_ARTICLE_ANCHOR -->
             <article class="post-card">
-              <a href="${slug}.html" class="post-img-wrapper"><img src="${imageUrl}"></a>
+              <a href="${slug}" class="post-img-wrapper"><img src="${imageUrl}"></a>
               <div class="post-content">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-                <a href="${slug}.html"><h3 class="post-title">${data.title}</h3></a>
+                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
+                <a href="${slug}"><h3 class="post-title">${data.title}</h3></a>
                 <div class="post-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</div>
                 <p class="post-excerpt">${data.excerpt}</p>
               </div>
@@ -278,10 +281,10 @@ SEO RULES:
     const sidebarHtml = `
             <!-- NEW_TRENDING_ANCHOR -->
             <li>
-              <a href="${slug}.html"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
+              <a href="${slug}"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
               <div class="sidebar-post-info">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}.html" class="post-category">${data.category}</a>
-                <a href="${slug}.html" class="trending-title">${data.title}</a>
+                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
+                <a href="${slug}" class="trending-title">${data.title}</a>
                 <span class="post-meta">By <a href="${assignedAuthor.slug}" class="author-link">${assignedAuthor.name}</a> &bull; ${dateStr}</span>
               </div>
             </li>`;
