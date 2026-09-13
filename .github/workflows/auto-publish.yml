@@ -2,8 +2,8 @@ name: FeelDesire Automated Daily Publisher
 
 on:
   schedule:
-    # Runs automatically every 3 hours (8 times a day)
-    - cron: '0 */3 * * *'
+    # Runs at 9:00 AM, 12:00 PM, and 3:00 PM PKT (UTC+5: 04:00, 07:00, 10:00 UTC)
+    - cron: '0 4,7,10 * * *'
   workflow_dispatch:
     inputs:
       keyword:
