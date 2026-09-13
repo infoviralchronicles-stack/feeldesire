@@ -38,21 +38,29 @@ async function generateAndPublish() {
     const { keyword, fromQueue } = getNextKeyword();
     console.log(`[Auto-Publish] Target Keyword: "${keyword}" (From queue: ${fromQueue})`);
 
-    const prompt = `You are an expert SEO magazine writer. Write a massive, highly comprehensive, and 100% SEO-optimized article about "${keyword}".
+    const prompt = `You are an elite SEO editorial director for a premier magazine. Write a massive, highly engaging, and 100% SEO-optimized article targeting the keyword "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy title MUST contain the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 sentence SEO meta description", "htmlContent": "HTML body without html/body tags."}
+{"title": "Catchy, high-CTR, natural SEO title containing the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 compelling sentence SEO meta description (under 160 characters)", "htmlContent": "HTML body without html/body tags."}
 Choose the most relevant category from: Travel, Lifestyle, Technology, Health, Business, Entertainment, Fashion, Food, Trending News.
+
+CRITICAL TITLE & SEO RULES:
+1. TITLE DIVERSITY & QUALITY:
+   - STRICTLY FORBIDDEN: Do NOT use the words "Guide", "Ultimate Guide", "Complete Guide", "A Guide to", "Everything You Need to Know", or "Mastering" in the title.
+   - Craft dynamic, punchy, editorial magazine-style headlines (e.g. using formats like: "Why [Keyword] Is Changing...", "Key Insights on [Keyword] for Smart Travelers", "Best Ways to Navigate [Keyword]", "[Keyword]: Real Secrets, Tips, and Expert Advice", "How [Keyword] Can Save You Time and Money").
+   - The title must naturally integrate the exact keyword "${keyword}" while sounding intriguing and click-worthy.
+   - Keep title length between 50 and 65 characters for optimal Google SERP display without truncation.
+
 IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
-1. The article MUST be extremely long, spanning exactly between 950 and 1050 words.
-2. You MUST write at least 8 distinct sections (H2).
-3. Each section MUST contain at least 2 very detailed, long paragraphs. Do not write short sections.
-4. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions but keep the answers very short and concise (1 to 2 sentences maximum).
-5. Provide high value, deeply informative, and expansive content. Do not be concise. Expand on every single detail.
-SEO RULES:
-6. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>).
-7. Do NOT include the current year anywhere.
-8. Do NOT include an H1 tag.
-9. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean spaces instead of dashes.`;
+2. The article MUST be extremely comprehensive, spanning between 950 and 1050 words.
+3. You MUST write at least 8 distinct sections with descriptive H2 headings (do NOT use repetitive generic headings).
+4. Each section MUST contain at least 2 very detailed, substantive paragraphs. Expand on every single detail with real practical insights.
+5. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions (keep answers crisp: 1 to 2 sentences maximum).
+
+ADDITIONAL SEO RULES:
+6. Use the exact keyword '${keyword}' in the first 50 words of the introduction, bolded (<strong>).
+7. Do NOT include the current year anywhere in the title or body.
+8. Do NOT include an H1 tag inside htmlContent (H1 is rendered by the template).
+9. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean natural spacing.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
