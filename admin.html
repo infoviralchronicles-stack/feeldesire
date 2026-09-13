@@ -514,44 +514,4 @@ const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-
  </footer>
  <script src="script.js"><\\/script>
 </body>
-</html>`;
- }
-
- function updateIndexHtml(indexContent, data, slug, dateStr, imageUrl) {
- const cardHtml = `<!-- NEW_ARTICLE_ANCHOR -->
-            <article class="post-card">
-              <a href="${slug}" class="post-img-wrapper"><img src="${imageUrl}"></a>
-              <div class="post-content">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
-                <a href="${slug}"><h3 class="post-title">${data.title}</h3></a>
-                <div class="post-meta">By <a href="author-david-thorne" class="author-link">David Thorne</a> • ${dateStr}</div>
-                <p class="post-excerpt">${data.excerpt}</p>
-              </div>
-            </article>`;
-
- const trendingHtml = `<!-- NEW_TRENDING_ANCHOR -->
-            <li>
-              <a href="${slug}"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
-              <div class="sidebar-post-info">
-                <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
-                <a href="${slug}" class="trending-title">${data.title}</a>
-                <span class="post-meta">By <a href="author-emma-collins" class="author-link">Emma Collins</a> &bull; ${dateStr}</span>
-              </div>
-            </li>`;
- 
- let newContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
- return newContent.replace('<!-- NEW_TRENDING_ANCHOR -->', trendingHtml);
- }
- </script>
-</body>
 </html>
-
-
-
-
-
-
-
-
-
-
