@@ -4,14 +4,28 @@ const path = require('path');
 // Manually curated mapping of core SEO topics and natural anchor keywords for site articles
 const TOPIC_REGISTRY = [
     {
-        "href": "ultimate-guide-to-healthy-morning-breakfast-recipes-for-vitality.html",
-        "category": "Food",
+        "href": "how-24-7-emergency-travel-support-protects-international-travelers.html",
+        "category": "Travel",
         "keywords": [
-            "healthy morning breakfast recipes",
-            "healthy breakfast recipes",
-            "morning breakfast recipes",
-            "morning nutrition",
-            "healthy morning breakfast"
+            "24 7 emergency travel support",
+            "emergency travel support",
+            "travel support services",
+            "emergency assistance for travelers",
+            "international travel emergencies",
+            "travel assistance"
+        ]
+    },
+    {
+        "href": "why-booking-with-a-travel-co-can-transform-your-next-vacation.html",
+        "category": "Travel",
+        "keywords": [
+            "booking with a travel company",
+            "booking with a travel co",
+            "transform your next vacation",
+            "professional travel planners",
+            "dedicated travel agency",
+            "planning a vacation",
+            "vacation planning"
         ]
     },
     {
@@ -19,10 +33,11 @@ const TOPIC_REGISTRY = [
         "category": "Travel",
         "keywords": [
             "top travel destinations",
+            "vacation destinations around the globe",
             "vacation destinations",
-            "travel destinations",
-            "vacation guide",
-            "travel planning"
+            "global travel destinations",
+            "international vacation spots",
+            "travel destinations"
         ]
     },
     {
@@ -30,32 +45,10 @@ const TOPIC_REGISTRY = [
         "category": "Travel",
         "keywords": [
             "start a travel blog",
-            "travel blog",
-            "digital business",
-            "monetization strategies",
-            "travel blogging"
-        ]
-    },
-    {
-        "href": "the-ultimate-guide-to-finding-the-best-noise-cancelling-headphones.html",
-        "category": "Travel",
-        "keywords": [
-            "best noise cancelling headphones",
-            "noise cancelling headphones",
-            "auditory comfort",
-            "audio quality",
-            "headphones"
-        ]
-    },
-    {
-        "href": "the-ultimate-guide-to-choosing-the-perfect-laptop-for-work-and-gaming.html",
-        "category": "Technology",
-        "keywords": [
-            "laptop for work and gaming",
-            "gaming laptop",
-            "work laptop",
-            "laptop setups",
-            "choosing the perfect laptop"
+            "building a travel blog",
+            "successful digital business",
+            "travel blogging career",
+            "travel blog"
         ]
     },
     {
@@ -63,10 +56,30 @@ const TOPIC_REGISTRY = [
         "category": "Travel",
         "keywords": [
             "chicago to houston flights",
+            "booking domestic flights",
             "booking flights",
-            "airline options",
-            "direct flights",
-            "flight deals"
+            "airline deals and tickets",
+            "flight booking"
+        ]
+    },
+    {
+        "href": "the-ultimate-guide-to-finding-the-best-noise-cancelling-headphones.html",
+        "category": "Technology",
+        "keywords": [
+            "best noise cancelling headphones",
+            "noise cancelling headphones",
+            "wireless audio headphones",
+            "travel headphones"
+        ]
+    },
+    {
+        "href": "the-ultimate-guide-to-choosing-the-perfect-laptop-for-work-and-gaming.html",
+        "category": "Technology",
+        "keywords": [
+            "laptop for work and gaming",
+            "choosing the perfect laptop",
+            "portable work laptop",
+            "high performance laptops"
         ]
     },
     {
@@ -74,9 +87,19 @@ const TOPIC_REGISTRY = [
         "category": "Technology",
         "keywords": [
             "smart home gadgets",
-            "smart home devices",
-            "home automation",
-            "modern living gadgets"
+            "modern smart home devices",
+            "elevating modern living",
+            "smart home technology"
+        ]
+    },
+    {
+        "href": "ultimate-guide-to-healthy-morning-breakfast-recipes-for-vitality.html",
+        "category": "Food",
+        "keywords": [
+            "healthy morning breakfast recipes",
+            "healthy morning breakfast",
+            "nutritious breakfast ideas",
+            "healthy breakfast recipes"
         ]
     }
 ];
