@@ -124,21 +124,21 @@ ADDITIONAL SEO RULES:
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
   <link rel="preload" as="image" href="${imageUrl}" fetchpriority="high">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.min.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <meta name="description" content="${data.excerpt.replace(/"/g, '&quot;')}">
-  <link rel="canonical" href="https://feeldesire.com/${slug}">
+  <link rel="canonical" href="https://www.feeldesire.com/${slug}">
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://feeldesire.com/${slug}">
+  <meta property="og:url" content="https://www.feeldesire.com/${slug}">
   <meta property="og:site_name" content="FeelDesire">
   <meta property="og:title" content="${data.title} - FeelDesire">
   <meta property="og:description" content="${data.excerpt.replace(/"/g, '&quot;')}">
   <meta property="og:image" content="${imageUrl}">
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://feeldesire.com/${slug}">
+  <meta name="twitter:url" content="https://www.feeldesire.com/${slug}">
   <meta name="twitter:title" content="${data.title} - FeelDesire">
   <meta name="twitter:description" content="${data.excerpt.replace(/"/g, '&quot;')}">
   <meta name="twitter:image" content="${imageUrl}">
@@ -160,13 +160,13 @@ ADDITIONAL SEO RULES:
     "name": "FeelDesire",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://feeldesire.com/logo.svg"
+      "url": "https://www.feeldesire.com/logo.svg"
     }
   },
   "description": "${data.excerpt.replace(/"/g, '\\"')}",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://feeldesire.com/${slug}"
+    "@id": "https://www.feeldesire.com/${slug}"
   }
 }
   </script>
@@ -288,7 +288,7 @@ ADDITIONAL SEO RULES:
       </div>
     </div>
   </footer>
-  <script src="script.js"></script>
+  <script src="script.min.js"></script>
 </body>
 </html>`;
 
@@ -308,7 +308,7 @@ ADDITIONAL SEO RULES:
     const latest = allArticles.filter(a => a.href !== cleanSlug).slice(0, 4);
     function mkCard(a) {
         const catSlug = a.category.toLowerCase().replace(' ', '-');
-        return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '"></a><div class="post-content"><a href="' + catSlug + '" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
+        return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '" alt="' + a.title.replace(/"/g, '&quot;') + '"></a><div class="post-content"><a href="' + catSlug + '" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
     }
     let sectionsHtml = '';
     if (related.length > 0) {
@@ -325,7 +325,7 @@ ADDITIONAL SEO RULES:
     const cardHtml = `
             <!-- NEW_ARTICLE_ANCHOR -->
             <article class="post-card">
-              <a href="${slug}" class="post-img-wrapper"><img src="${imageUrl}"></a>
+              <a href="${slug}" class="post-img-wrapper"><img src="${imageUrl}" alt="${data.title}"></a>
               <div class="post-content">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
                 <a href="${slug}"><h3 class="post-title">${data.title}</h3></a>
@@ -337,7 +337,7 @@ ADDITIONAL SEO RULES:
     const sidebarHtml = `
             <!-- NEW_TRENDING_ANCHOR -->
             <li>
-              <a href="${slug}"><img src="${imageUrl}" class="sidebar-thumbnail"></a>
+              <a href="${slug}"><img src="${imageUrl}" class="sidebar-thumbnail" alt="${data.title}"></a>
               <div class="sidebar-post-info">
                 <a href="${data.category.toLowerCase().replace(' ', '-')}" class="post-category">${data.category}</a>
                 <a href="${slug}" class="trending-title">${data.title}</a>

@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://feeldesire.com/sitemap.xml
+Sitemap: https://www.feeldesire.com/sitemap.xml
 # LLM Context
-# https://feeldesire.com/llms.txt
+# https://www.feeldesire.com/llms.txt
