@@ -124,7 +124,7 @@ ADDITIONAL SEO RULES:
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
   <link rel="preload" as="image" href="${imageUrl}" fetchpriority="high">
-  <link rel="stylesheet" href="style.min.css">
+  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <meta name="description" content="${data.excerpt.replace(/"/g, '&quot;')}">
@@ -288,7 +288,7 @@ ADDITIONAL SEO RULES:
       </div>
     </div>
   </footer>
-  <script src="script.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>`;
 
