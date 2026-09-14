@@ -20,6 +20,10 @@ async function generateSingle() {
     console.log(`Generating: ${keyword}...`);
     
     try {
+        // Retrieve candidate topics for contextual internal linking
+        const availableForLinks = getAvailableArticles(keyword);
+        const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => `"${a.keywords[0]}"`).join(', ');
+
         const prompt = `You are an expert SEO magazine writer. Write a massive, highly comprehensive, and 100% SEO-optimized article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
 {"title": "Catchy title MUST contain the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 sentence SEO meta description", "htmlContent": "HTML body without html/body tags."}
@@ -32,9 +36,10 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 5. Provide high value, deeply informative, and expansive content. Do not be concise. Expand on every single detail.
 SEO RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words, bolded (<strong>).
-7. Do NOT include the current year anywhere.
-8. Do NOT include an H1 tag.
-9. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean spaces instead of dashes.`;
+7. Naturally integrate at least 2 to 3 of the following related topics/phrases into body paragraphs (do NOT add HTML links yourself, just mention the phrases naturally): ${relatedTopicPhrases}.
+8. Do NOT include the current year anywhere.
+9. Do NOT include an H1 tag.
+10. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean spaces instead of dashes.`;
 
         const response = await ai.models.generateContent({
             model: 'gemini-3.6-flash',

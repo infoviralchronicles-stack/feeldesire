@@ -4,20 +4,40 @@ const path = require('path');
 // Manually curated mapping of core SEO topics and natural anchor keywords for site articles
 const TOPIC_REGISTRY = [
     {
+        "href": "smart-ways-a-trip-and-vacation-can-save-you-time-and-money.html",
+        "category": "Travel",
+        "title": "Smart Ways a Trip and Vacation Can Save You Time and Money",
+        "keywords": [
+            "smart ways a trip and vacation can save you time and money",
+            "trip and vacation",
+            "save time and money on vacation",
+            "vacation savings",
+            "travel budget",
+            "planning a trip",
+            "leisure getaways",
+            "vacation modes"
+        ]
+    },
+    {
         "href": "how-24-7-emergency-travel-support-protects-international-travelers.html",
         "category": "Travel",
+        "title": "How 24/7 Emergency Travel Support Protects International Travelers",
         "keywords": [
             "24 7 emergency travel support",
             "emergency travel support",
             "travel support services",
             "emergency assistance for travelers",
             "international travel emergencies",
-            "travel assistance"
+            "travel assistance",
+            "travel insurance",
+            "emergency travel assistance",
+            "emergency travel"
         ]
     },
     {
         "href": "why-booking-with-a-travel-co-can-transform-your-next-vacation.html",
         "category": "Travel",
+        "title": "Why Booking With a Travel Co Can Transform Your Next Vacation",
         "keywords": [
             "booking with a travel company",
             "booking with a travel co",
@@ -25,81 +45,106 @@ const TOPIC_REGISTRY = [
             "professional travel planners",
             "dedicated travel agency",
             "planning a vacation",
-            "vacation planning"
+            "vacation planning",
+            "travel companions",
+            "travel agency"
         ]
     },
     {
         "href": "ultimate-vacation-guide-to-the-top-travel-destinations-around-the-globe.html",
         "category": "Travel",
+        "title": "Ultimate Vacation Guide to the Top Travel Destinations Around the Globe",
         "keywords": [
             "top travel destinations",
             "vacation destinations around the globe",
             "vacation destinations",
             "global travel destinations",
             "international vacation spots",
-            "travel destinations"
+            "travel destinations",
+            "new destinations",
+            "popular destinations",
+            "popular travel destinations"
         ]
     },
     {
         "href": "how-to-start-a-travel-blog-and-build-a-successful-digital-business.html",
         "category": "Travel",
+        "title": "How to Start a Travel Blog and Build a Successful Digital Business",
         "keywords": [
             "start a travel blog",
             "building a travel blog",
             "successful digital business",
             "travel blogging career",
-            "travel blog"
+            "travel blog",
+            "travel blogging",
+            "digital business"
         ]
     },
     {
         "href": "ultimate-guide-to-booking-chicago-to-houston-flights-airlines-airports-and-deals.html",
         "category": "Travel",
+        "title": "Ultimate Guide to Booking Chicago to Houston Flights: Airlines, Airports, and Deals",
         "keywords": [
             "chicago to houston flights",
             "booking domestic flights",
             "booking flights",
             "airline deals and tickets",
-            "flight booking"
+            "flight booking",
+            "flight discounts"
         ]
     },
     {
         "href": "the-ultimate-guide-to-finding-the-best-noise-cancelling-headphones.html",
         "category": "Technology",
+        "title": "The Ultimate Guide to Finding the Best Noise Cancelling Headphones",
         "keywords": [
             "best noise cancelling headphones",
             "noise cancelling headphones",
             "wireless audio headphones",
-            "travel headphones"
+            "travel headphones",
+            "audio equipment",
+            "audio gear",
+            "headphones"
         ]
     },
     {
         "href": "the-ultimate-guide-to-choosing-the-perfect-laptop-for-work-and-gaming.html",
         "category": "Technology",
+        "title": "The Ultimate Guide to Choosing the Perfect Laptop for Work and Gaming",
         "keywords": [
             "laptop for work and gaming",
             "choosing the perfect laptop",
             "portable work laptop",
-            "high performance laptops"
+            "high performance laptops",
+            "laptops",
+            "laptop"
         ]
     },
     {
         "href": "the-ultimate-guide-to-smart-home-gadgets-elevating-modern-living.html",
         "category": "Technology",
+        "title": "The Ultimate Guide to Smart Home Gadgets: Elevating Modern Living",
         "keywords": [
             "smart home gadgets",
             "modern smart home devices",
             "elevating modern living",
-            "smart home technology"
+            "smart home technology",
+            "smart home devices",
+            "smart home"
         ]
     },
     {
         "href": "ultimate-guide-to-healthy-morning-breakfast-recipes-for-vitality.html",
         "category": "Food",
+        "title": "Ultimate Guide to Healthy Morning Breakfast Recipes for Vitality",
         "keywords": [
             "healthy morning breakfast recipes",
             "healthy morning breakfast",
             "nutritious breakfast ideas",
-            "healthy breakfast recipes"
+            "healthy breakfast recipes",
+            "morning breakfast",
+            "breakfast recipes",
+            "breakfast"
         ]
     }
 ];
@@ -123,12 +168,24 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
         return bCat - aCat;
     });
 
-    let modifiedHtml = htmlBody;
-    let linksInjected = 0;
-    const maxLinks = 2; // Best SEO practice: 2 high-quality contextual links per article
+    // Detect existing internal links
+    const existingLinkMatches = htmlBody.match(/<a\s+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g) || [];
     const usedHrefs = new Set();
+    existingLinkMatches.forEach(tag => {
+        const m = tag.match(/href="([^"]+)"/);
+        if (m) {
+            const clean = m[1].replace(/\.html$/, '');
+            usedHrefs.add(clean);
+            usedHrefs.add(clean + '.html');
+        }
+    });
 
-    // Iterate through paragraphs
+    let linksInjected = 0;
+    const maxLinks = 2; // Target: 2 high-quality contextual links per article
+    const linksNeeded = Math.max(0, maxLinks - existingLinkMatches.length);
+    if (linksNeeded <= 0) return htmlBody;
+
+    let modifiedHtml = htmlBody;
     const pRegex = /<p>([\s\S]*?)<\/p>/g;
     const paragraphs = [];
     let pMatch;
@@ -136,29 +193,30 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
         paragraphs.push(pMatch[0]);
     }
 
+    // Pass 1: Natural keyword matching
     for (let p of paragraphs) {
-        if (linksInjected >= maxLinks) break;
-        // Don't inject in paragraphs that already contain links or the bolded main keyword
+        if (linksInjected >= linksNeeded) break;
+        // Don't inject in paragraphs that already contain links or the bolded focus keyword
         if (p.includes('<a ') || p.includes('<strong>')) continue;
 
         for (const article of candidates) {
-            if (usedHrefs.has(article.href)) continue;
+            if (usedHrefs.has(article.href) || usedHrefs.has(article.href.replace(/\.html$/, ''))) continue;
 
             let matched = false;
             // Sort keywords longest first to match full phrases
             const sortedKw = [...article.keywords].sort((a, b) => b.length - a.length);
 
             for (const kw of sortedKw) {
-                // Word boundary check, case-insensitive
                 const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const wordRx = new RegExp(`\\b(${escaped})\\b`, 'i');
 
                 if (wordRx.test(p)) {
                     const cleanHref = article.href.replace(/\.html$/, '');
                     const newP = p.replace(wordRx, `<a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">$1</a>`);
-                    if (newP !== p) {
+                    if (newP !== p && modifiedHtml.includes(p)) {
                         modifiedHtml = modifiedHtml.replace(p, newP);
                         usedHrefs.add(article.href);
+                        usedHrefs.add(cleanHref);
                         linksInjected++;
                         matched = true;
                         break;
@@ -169,7 +227,33 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
         }
     }
 
+    // Pass 2: Contextual fallback if still under target links
+    if (linksInjected < linksNeeded) {
+        for (let i = 0; i < paragraphs.length; i++) {
+            if (linksInjected >= linksNeeded) break;
+            const p = paragraphs[i];
+            // Only inject in middle paragraphs without links or headers/FAQs/Pros
+            if (i < 2 || p.includes('<a ') || p.includes('<strong>') || p.includes('FAQ') || p.includes('Pros:') || p.includes('Cons:')) continue;
+
+            for (const article of candidates) {
+                if (usedHrefs.has(article.href) || usedHrefs.has(article.href.replace(/\.html$/, ''))) continue;
+
+                const cleanHref = article.href.replace(/\.html$/, '');
+                const callout = ` For related insights, explore our feature on <a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">${article.title}</a>.`;
+                const newP = p.replace(/<\/p>$/, `${callout}</p>`);
+                if (newP !== p && modifiedHtml.includes(p)) {
+                    modifiedHtml = modifiedHtml.replace(p, newP);
+                    usedHrefs.add(article.href);
+                    usedHrefs.add(cleanHref);
+                    linksInjected++;
+                    break;
+                }
+            }
+        }
+    }
+
     return modifiedHtml;
 }
 
 module.exports = { injectNaturalInternalLinks, getAvailableArticles, TOPIC_REGISTRY };
+

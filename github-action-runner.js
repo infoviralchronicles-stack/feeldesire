@@ -38,6 +38,10 @@ async function generateAndPublish() {
     const { keyword, fromQueue } = getNextKeyword();
     console.log(`[Auto-Publish] Target Keyword: "${keyword}" (From queue: ${fromQueue})`);
 
+    // Retrieve candidate topics for contextual internal linking
+    const availableForLinks = getAvailableArticles(keyword);
+    const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => `"${a.keywords[0]}"`).join(', ');
+
     const prompt = `You are an elite SEO editorial director for a premier magazine. Write a massive, highly engaging, and 100% SEO-optimized article targeting the keyword "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
 {"title": "Catchy, high-CTR, natural SEO title containing the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 compelling sentence SEO meta description (under 160 characters)", "htmlContent": "HTML body without html/body tags."}
@@ -56,11 +60,12 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 4. Each section MUST contain at least 2 very detailed, substantive paragraphs. Expand on every single detail with real practical insights.
 5. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions (keep answers crisp: 1 to 2 sentences maximum).
 
-ADDITIONAL SEO RULES:
+ADDITIONAL SEO & INTERNAL LINKING RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words of the introduction, bolded (<strong>).
-7. Do NOT include the current year anywhere in the title or body.
-8. Do NOT include an H1 tag inside htmlContent (H1 is rendered by the template).
-9. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean natural spacing.`;
+7. Naturally integrate at least 2 to 3 of the following related topics/phrases into body paragraphs (do NOT add HTML links yourself, just mention the phrases naturally): ${relatedTopicPhrases}.
+8. Do NOT include the current year anywhere in the title or body.
+9. Do NOT include an H1 tag inside htmlContent (H1 is rendered by the template).
+10. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean natural spacing.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
