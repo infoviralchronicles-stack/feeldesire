@@ -335,7 +335,14 @@ ADDITIONAL SEO RULES:
 
     const sectionsHtml = '<section class="related-articles" style="margin-top:50px;margin-bottom:40px;"><div class="container"><h2 class="section-title"><span class="tag-box">Related Articles</span></h2><div class="posts-grid">' + related.map(mkCard).join('') + '</div></div></section>\n';
     
+    // Extract current trending-list from index
+    const trendingMatch = idxHtml.match(/<ul class="trending-list">([\s\S]*?)<\/ul>/);
+    const trendingListContent = trendingMatch ? trendingMatch[1].trim() : '';
+
     let finalHtml = fs.readFileSync(slug + '.html', 'utf8');
+    if (trendingListContent) {
+        finalHtml = finalHtml.replace(/<ul class="trending-list">[\s\S]*?<\/ul>/, '<ul class="trending-list">\n' + trendingListContent + '\n    </ul>');
+    }
     finalHtml = finalHtml.replace('<footer>', sectionsHtml + '<footer>');
     fs.writeFileSync(slug + '.html', finalHtml);
 
