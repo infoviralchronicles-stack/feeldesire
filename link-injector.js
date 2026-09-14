@@ -8,10 +8,9 @@ const TOPIC_REGISTRY = [
         "category": "Travel",
         "title": "Smart Ways a Trip and Vacation Can Save You Time and Money",
         "keywords": [
-            "smart ways a trip and vacation can save you time and money",
-            "trip and vacation",
-            "save time and money on vacation",
             "vacation savings",
+            "save time and money on vacation",
+            "trip and vacation",
             "travel budget",
             "planning a trip",
             "leisure getaways",
