@@ -193,11 +193,13 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
         paragraphs.push(pMatch[0]);
     }
 
-    // Pass 1: Natural keyword matching
+    // Pass 1: Natural keyword matching (seamlessly converts mentioned phrases or bolded topic phrases into natural links)
     for (let p of paragraphs) {
         if (linksInjected >= linksNeeded) break;
-        // Don't inject in paragraphs that already contain links or the bolded focus keyword
-        if (p.includes('<a ') || p.includes('<strong>')) continue;
+        // Don't inject in paragraphs that already contain links or the primary article focus keyword
+        if (p.includes('<a ')) continue;
+        // Skip intro if it has the bolded focus keyword of the current article
+        if (p === paragraphs[0] && p.includes('<strong>')) continue;
 
         for (const article of candidates) {
             if (usedHrefs.has(article.href) || usedHrefs.has(article.href.replace(/\.html$/, ''))) continue;
@@ -208,10 +210,22 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
 
             for (const kw of sortedKw) {
                 const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // Support both plain text phrase and <strong>phrase</strong>
+                const strongRx = new RegExp(`<strong>(${escaped})</strong>`, 'i');
                 const wordRx = new RegExp(`\\b(${escaped})\\b`, 'i');
+                const cleanHref = article.href.replace(/\.html$/, '');
 
-                if (wordRx.test(p)) {
-                    const cleanHref = article.href.replace(/\.html$/, '');
+                if (strongRx.test(p)) {
+                    const newP = p.replace(strongRx, `<a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">$1</a>`);
+                    if (newP !== p && modifiedHtml.includes(p)) {
+                        modifiedHtml = modifiedHtml.replace(p, newP);
+                        usedHrefs.add(article.href);
+                        usedHrefs.add(cleanHref);
+                        linksInjected++;
+                        matched = true;
+                        break;
+                    }
+                } else if (wordRx.test(p)) {
                     const newP = p.replace(wordRx, `<a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">$1</a>`);
                     if (newP !== p && modifiedHtml.includes(p)) {
                         modifiedHtml = modifiedHtml.replace(p, newP);
@@ -227,20 +241,21 @@ function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
         }
     }
 
-    // Pass 2: Contextual fallback if still under target links
+    // Pass 2: Contextual fallback if still under target links (in natural flowing editorial style)
     if (linksInjected < linksNeeded) {
         for (let i = 0; i < paragraphs.length; i++) {
             if (linksInjected >= linksNeeded) break;
             const p = paragraphs[i];
             // Only inject in middle paragraphs without links or headers/FAQs/Pros
-            if (i < 2 || p.includes('<a ') || p.includes('<strong>') || p.includes('FAQ') || p.includes('Pros:') || p.includes('Cons:')) continue;
+            if (i < 2 || p.includes('<a ') || p.includes('FAQ') || p.includes('Pros:') || p.includes('Cons:')) continue;
 
             for (const article of candidates) {
                 if (usedHrefs.has(article.href) || usedHrefs.has(article.href.replace(/\.html$/, ''))) continue;
 
                 const cleanHref = article.href.replace(/\.html$/, '');
-                const callout = ` For related insights, explore our feature on <a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">${article.title}</a>.`;
-                const newP = p.replace(/<\/p>$/, `${callout}</p>`);
+                const naturalAnchor = article.keywords[0] || article.title.toLowerCase();
+                const contextualSentence = ` When coordinating your itinerary, understanding <a href="${cleanHref}" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">${naturalAnchor}</a> ensures you maximize every stage of your journey.`;
+                const newP = p.replace(/<\/p>$/, `${contextualSentence}</p>`);
                 if (newP !== p && modifiedHtml.includes(p)) {
                     modifiedHtml = modifiedHtml.replace(p, newP);
                     usedHrefs.add(article.href);
