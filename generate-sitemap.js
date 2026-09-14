@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const baseDir = 'c:\\Users\\Lapzone.pk\\Desktop\\website new';
+const baseDir = __dirname;
 const siteUrl = 'https://www.feeldesire.com';
 const currentDate = new Date().toISOString().split('T')[0];
 
