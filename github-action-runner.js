@@ -296,25 +296,44 @@ ADDITIONAL SEO RULES:
 
     // Read all articles from index for bottom widgets
     const idxHtml = fs.readFileSync('index.html', 'utf8');
-    const cardRx = /<article class="post-card">\s*<a href="([^"]+)" class="post-img-wrapper"><img src="([^"]+)"><\/a>\s*<div class="post-content">\s*<a href="[^"]*" class="post-category">([^<]+)<\/a>\s*<a href="[^"]*"><h3 class="post-title">([^<]+)<\/h3><\/a>\s*<div class="post-meta">By <[^>]+>([^<]+)<\/[^>]+>\s*&bull;\s*([^<]+)<\/div>\s*<p class="post-excerpt">([^<]*)<\/p>/g;
+    const cardRx = /<article class="post-card">([\s\S]*?)<\/article>/g;
     const allArticles = [];
     let cm;
     while ((cm = cardRx.exec(idxHtml)) !== null) {
-        const cleanHref = cm[1].replace(/\.html$/, '');
-        allArticles.push({ href: cleanHref, image: cm[2], category: cm[3].trim(), title: cm[4].trim(), author: cm[5].trim(), date: cm[6].trim() });
+        const cardContent = cm[1];
+        const hrefMatch = cardContent.match(/<a\s+href="([^"]+)"\s+class="post-img-wrapper"/);
+        const imgMatch = cardContent.match(/<img\b[^>]*src="([^"]+)"/);
+        const catMatch = cardContent.match(/class="post-category">([^<]+)<\/a>/);
+        const titleMatch = cardContent.match(/<h3\s+class="post-title">([^<]+)<\/h3>/);
+        const authorMatch = cardContent.match(/(?:class="author-link"|class="author-name"[^>]*>|By\s+<[^>]+>)([^<]+)<\/[^>]+>/);
+        const dateMatch = cardContent.match(/&bull;\s*([^<]+)<\/div>/);
+
+        if (hrefMatch && imgMatch && titleMatch) {
+            allArticles.push({
+                href: hrefMatch[1].replace(/\.html$/, ''),
+                image: imgMatch[1],
+                category: catMatch ? catMatch[1].trim() : 'General',
+                title: titleMatch[1].trim(),
+                author: authorMatch ? authorMatch[1].trim() : 'FeelDesire Team',
+                date: dateMatch ? dateMatch[1].trim() : 'Recently'
+            });
+        }
     }
     const cleanSlug = slug.replace(/\.html$/, '');
-    const related = allArticles.filter(a => a.category === data.category && a.href !== cleanSlug).slice(0, 3);
-    const latest = allArticles.filter(a => a.href !== cleanSlug).slice(0, 4);
+    let related = allArticles.filter(a => a.href !== cleanSlug && a.category.toLowerCase() === data.category.toLowerCase());
+    if (related.length < 3) {
+        const remaining = allArticles.filter(a => a.href !== cleanSlug && !related.some(r => r.href === a.href));
+        related = related.concat(remaining).slice(0, 3);
+    } else {
+        related = related.slice(0, 3);
+    }
+
     function mkCard(a) {
-        const catSlug = a.category.toLowerCase().replace(' ', '-');
+        const catSlug = a.category.toLowerCase().replace(/\s+/g, '-');
         return '<article class="post-card"><a href="' + a.href + '" class="post-img-wrapper"><img src="' + a.image + '" alt="' + a.title.replace(/"/g, '&quot;') + '"></a><div class="post-content"><a href="' + catSlug + '" class="post-category">' + a.category + '</a><a href="' + a.href + '"><h3 class="post-title">' + a.title + '</h3></a><div class="post-meta">By <span class="author-name" style="font-weight:600; color:var(--text-dark);">' + a.author + '</span> &bull; ' + a.date + '</div></div></article>';
     }
-    let sectionsHtml = '';
-    if (related.length > 0) {
-        sectionsHtml += '<section class="related-articles" style="margin-top:50px;"><div class="container"><h2 class="section-title"><span class="tag-box">Related Articles</span></h2><div class="posts-grid">' + related.map(mkCard).join('') + '</div></div></section>';
-    }
-    sectionsHtml += '<section class="latest-articles" style="margin-top:50px;margin-bottom:40px;"><div class="container"><h2 class="section-title"><span class="tag-box">Latest Articles</span></h2><div class="posts-grid">' + latest.map(mkCard).join('') + '</div></div></section>';
+
+    const sectionsHtml = '<section class="related-articles" style="margin-top:50px;margin-bottom:40px;"><div class="container"><h2 class="section-title"><span class="tag-box">Related Articles</span></h2><div class="posts-grid">' + related.map(mkCard).join('') + '</div></div></section>\n';
     
     let finalHtml = fs.readFileSync(slug + '.html', 'utf8');
     finalHtml = finalHtml.replace('<footer>', sectionsHtml + '<footer>');
