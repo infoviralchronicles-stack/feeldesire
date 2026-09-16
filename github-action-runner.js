@@ -460,6 +460,19 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
 
     indexContent = indexContent.replace('<!-- NEW_ARTICLE_ANCHOR -->', cardHtml);
     indexContent = indexContent.replace('<!-- NEW_TRENDING_ANCHOR -->', sidebarHtml);
+
+    // Keep sidebar trending-list capped at exactly 10 items
+    const trendingUlMatch = indexContent.match(/<ul class="trending-list">([\s\S]*?)<\/ul>/);
+    if (trendingUlMatch) {
+        const fullUl = trendingUlMatch[1];
+        const items = fullUl.match(/<li>[\s\S]*?<\/li>/g) || [];
+        if (items.length > 10) {
+            const cappedItems = items.slice(0, 10).join('\n            ');
+            const newUlContent = `\n            <!-- NEW_TRENDING_ANCHOR -->\n            ${cappedItems}\n          `;
+            indexContent = indexContent.replace(/<ul class="trending-list">[\s\S]*?<\/ul>/, `<ul class="trending-list">${newUlContent}</ul>`);
+        }
+    }
+
     fs.writeFileSync('index.html', indexContent);
 
     // Rebuild categories and sitemap
