@@ -126,10 +126,9 @@ const TOPIC_REGISTRY = [
         "keywords": [
             "smart home gadgets",
             "modern smart home devices",
-            "elevating modern living",
             "smart home technology",
             "smart home devices",
-            "smart home"
+            "home automation"
         ]
     },
     {
@@ -141,23 +140,177 @@ const TOPIC_REGISTRY = [
             "healthy morning breakfast",
             "nutritious breakfast ideas",
             "healthy breakfast recipes",
-            "morning breakfast",
-            "breakfast recipes",
-            "breakfast"
+            "morning breakfast ideas",
+            "energizing breakfast"
+        ]
+    },
+    {
+        "href": "how-an-ai-resume-builder-free-tool-upgrades-your-career.html",
+        "category": "Business",
+        "title": "How an AI Resume Builder Free Tool Upgrades Your Career",
+        "keywords": [
+            "ai resume builder",
+            "resume optimization",
+            "automated career tools",
+            "professional resume builder",
+            "digital career tools"
+        ]
+    },
+    {
+        "href": "how-flights-from-raleigh-to-new-york-can-save-you-money.html",
+        "category": "Travel",
+        "title": "How Flights from Raleigh to New York Can Save You Money",
+        "keywords": [
+            "flights from raleigh to new york",
+            "raleigh to new york flights",
+            "east coast air travel",
+            "budget flight booking"
+        ]
+    },
+    {
+        "href": "how-an-air-ticket-to-panama-city-saves-you-real-money.html",
+        "category": "Travel",
+        "title": "How an Air Ticket to Panama City Saves You Real Money",
+        "keywords": [
+            "air ticket to panama city",
+            "panama city flights",
+            "latin america air travel",
+            "cheap flight routes"
+        ]
+    },
+    {
+        "href": "how-to-fly-houston-to-orlando-with-maximum-ease-and-savings.html",
+        "category": "Travel",
+        "title": "How to Fly Houston to Orlando with Maximum Ease and Savings",
+        "keywords": [
+            "fly houston to orlando",
+            "houston to orlando flights",
+            "florida travel savings",
+            "direct domestic flights"
+        ]
+    },
+    {
+        "href": "best-ways-to-navigate-los-angeles-to-new-york-flights-fast.html",
+        "category": "Travel",
+        "title": "Best Ways to Navigate Los Angeles to New York Flights Fast",
+        "keywords": [
+            "los angeles to new york flights",
+            "transcontinental flights",
+            "cross country air travel",
+            "lax to nyc travel"
+        ]
+    },
+    {
+        "href": "best-ways-to-fly-new-york-to-punta-cana-for-smart-travelers.html",
+        "category": "Travel",
+        "title": "Best Ways to Fly New York to Punta Cana for Smart Travelers",
+        "keywords": [
+            "new york to punta cana flights",
+            "caribbean flight deals",
+            "tropical getaway travel",
+            "direct island flights"
+        ]
+    },
+    {
+        "href": "draft-an-email-to-a-friend-about-travel-experience-that-shines.html",
+        "category": "Travel",
+        "title": "Draft an Email to a Friend About Travel Experience That Shines",
+        "keywords": [
+            "email about travel experience",
+            "travel storytelling",
+            "writing travel updates",
+            "sharing vacation memories"
+        ]
+    },
+    {
+        "href": "how-houston-to-chicago-travel-can-save-you-real-money.html",
+        "category": "Travel",
+        "title": "How Houston to Chicago Travel Can Save You Real Money",
+        "keywords": [
+            "houston to chicago travel",
+            "midwest flight connections",
+            "interstate flight deals"
         ]
     }
 ];
 
-function getAvailableArticles(currentSlug) {
-    return TOPIC_REGISTRY.filter(item => {
-        const itemSlug = item.href.replace('.html', '');
-        return itemSlug !== currentSlug;
+// Helper to shuffle an array
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// Inferred category helper from keyword/slug
+function inferCategory(keywordOrSlug) {
+    const lower = (keywordOrSlug || '').toLowerCase();
+    if (/flight|travel|vacation|trip|ticket|destination|orlando|chicago|houston|raleigh|panama|punta cana|lax|airline|airport/i.test(lower)) {
+        return 'Travel';
+    }
+    if (/ai |artificial intelligence|software|app|laptop|headphone|gadget|tech|iphone|windows|mac|code|developer/i.test(lower)) {
+        return 'Technology';
+    }
+    if (/career|resume|business|startup|seo|marketing|investment|finance/i.test(lower)) {
+        return 'Business';
+    }
+    if (/breakfast|recipe|food|diet|nutrition|coffee|meal/i.test(lower)) {
+        return 'Food';
+    }
+    if (/fitness|workout|health|wellness|calorie|running|sleep/i.test(lower)) {
+        return 'Health';
+    }
+    return 'Lifestyle';
+}
+
+function getAvailableArticles(currentSlug, targetCategory) {
+    const cleanCurrent = (currentSlug || '').toLowerCase().replace('.html', '');
+    const detectedCat = targetCategory || inferCategory(cleanCurrent);
+
+    // Filter out current article
+    let candidates = TOPIC_REGISTRY.filter(item => {
+        const itemSlug = item.href.replace('.html', '').toLowerCase();
+        return itemSlug !== cleanCurrent;
     });
+
+    // Category mapping: same category or closely compatible
+    const catGroup = {
+        'Technology': ['Technology', 'Business', 'Lifestyle'],
+        'Business': ['Business', 'Technology', 'Lifestyle'],
+        'Travel': ['Travel', 'Lifestyle'],
+        'Food': ['Food', 'Health', 'Lifestyle'],
+        'Health': ['Health', 'Lifestyle', 'Food'],
+        'Lifestyle': ['Lifestyle', 'Technology', 'Travel', 'Food', 'Health', 'Business']
+    };
+
+    const allowedCats = catGroup[detectedCat] || [detectedCat, 'Lifestyle'];
+
+    // Filter strictly to relevant categories
+    let filtered = candidates.filter(item => allowedCats.includes(item.category));
+    if (filtered.length < 2) {
+        // Fallback to all candidates if not enough in group
+        filtered = candidates;
+    }
+
+    // Sort: same category first, then randomize order to prevent the same 1-2 articles always being chosen
+    filtered.sort((a, b) => {
+        const aSame = (a.category === detectedCat) ? 1 : 0;
+        const bSame = (b.category === detectedCat) ? 1 : 0;
+        return bSame - aSame;
+    });
+
+    // Take top matching pool and shuffle them so anchor suggestions vary wildly
+    const sameCatMatches = shuffleArray(filtered.filter(a => a.category === detectedCat));
+    const otherCatMatches = shuffleArray(filtered.filter(a => a.category !== detectedCat));
+
+    return [...sameCatMatches, ...otherCatMatches];
 }
 
 // Naturally inject internal links directly into relevant keywords in body text
 function injectNaturalInternalLinks(htmlBody, currentSlug, currentCategory) {
-    const candidates = getAvailableArticles(currentSlug);
+    const candidates = getAvailableArticles(currentSlug, currentCategory);
     if (candidates.length === 0) return htmlBody;
 
     // Prioritize candidates in same category or adjacent category

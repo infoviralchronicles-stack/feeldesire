@@ -38,9 +38,13 @@ async function generateAndPublish() {
     const { keyword, fromQueue } = getNextKeyword();
     console.log(`[Auto-Publish] Target Keyword: "${keyword}" (From queue: ${fromQueue})`);
 
-    // Retrieve candidate topics for contextual internal linking
+    // Retrieve candidate topics for contextual internal linking matching the topic/category
     const availableForLinks = getAvailableArticles(keyword);
-    const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => `"${a.keywords[0]}"`).join(', ');
+    // Pick 3-4 diverse candidate anchors from matching category pool
+    const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => {
+        const randKw = a.keywords[Math.floor(Math.random() * a.keywords.length)];
+        return `"${randKw}"`;
+    }).join(', ');
 
     const prompt = `You are an elite SEO editorial director for a premier magazine. Write a massive, highly engaging, and 100% SEO-optimized article targeting the keyword "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:

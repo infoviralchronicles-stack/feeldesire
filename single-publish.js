@@ -20,9 +20,13 @@ async function generateSingle() {
     console.log(`Generating: ${keyword}...`);
     
     try {
-        // Retrieve candidate topics for contextual internal linking
+        // Retrieve candidate topics for contextual internal linking matching the topic/category
         const availableForLinks = getAvailableArticles(keyword);
-        const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => `"${a.keywords[0]}"`).join(', ');
+        // Pick 3-4 diverse candidate anchors from matching category pool
+        const relatedTopicPhrases = availableForLinks.slice(0, 4).map(a => {
+            const randKw = a.keywords[Math.floor(Math.random() * a.keywords.length)];
+            return `"${randKw}"`;
+        }).join(', ');
 
         const prompt = `You are an expert SEO magazine writer. Write a massive, highly comprehensive, and 100% SEO-optimized article about "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
