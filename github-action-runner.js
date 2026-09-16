@@ -14,24 +14,102 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
+// Helper to normalize strings for duplicate matching
+function normalizeText(t) {
+    return (t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function isKeywordAlreadyPublished(kw) {
+    const norm = normalizeText(kw);
+    if (!norm) return true;
+
+    // 1. Check published-keywords.txt if present
+    const pubPath = path.join(__dirname, 'published-keywords.txt');
+    if (fs.existsSync(pubPath)) {
+        const publishedList = fs.readFileSync(pubPath, 'utf8')
+            .split('\n')
+            .map(l => normalizeText(l))
+            .filter(Boolean);
+        if (publishedList.some(p => p === norm || norm.includes(p) || p.includes(norm))) {
+            return true;
+        }
+    }
+
+    // 2. Scan all existing HTML files on disk to prevent duplicates
+    const files = fs.readdirSync(__dirname).filter(f => f.endsWith('.html'));
+    for (const file of files) {
+        // Skip non-article core files
+        if (['index.html','contact.html','about.html','privacy-policy.html','terms-conditions.html',
+             'lifestyle.html','technology.html','travel.html','food.html','business.html','health.html',
+             'about-us.html','admin.html','advertise.html','entertainment.html','fashion.html',
+             'our-story.html','trending-news.html','blog-template.html'].includes(file) || file.startsWith('author-')) {
+            continue;
+        }
+
+        const fileSlugNorm = normalizeText(file.replace('.html', ''));
+        if (fileSlugNorm === norm || fileSlugNorm.includes(norm) || norm.includes(fileSlugNorm)) {
+            return true;
+        }
+
+        const content = fs.readFileSync(path.join(__dirname, file), 'utf8');
+        const titleMatch = content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+        if (titleMatch) {
+            const titleNorm = normalizeText(titleMatch[1]);
+            if (titleNorm.includes(norm) || norm.includes(titleNorm)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function markKeywordAsPublished(kw, title, slug) {
+    const pubPath = path.join(__dirname, 'published-keywords.txt');
+    const entriesToAdd = [kw, title, slug.replace(/-/g, ' ')].filter(Boolean);
+    let existing = [];
+    if (fs.existsSync(pubPath)) {
+        existing = fs.readFileSync(pubPath, 'utf8').split('\n').map(l => l.trim()).filter(Boolean);
+    }
+    entriesToAdd.forEach(e => {
+        if (!existing.includes(e.toLowerCase())) {
+            existing.push(e.toLowerCase());
+        }
+    });
+    fs.writeFileSync(pubPath, existing.sort().join('\n') + '\n', 'utf8');
+}
+
 function getNextKeyword() {
     // 1. If passed via CLI argument
     if (process.argv[2] && process.argv[2].trim()) {
-        return { keyword: process.argv[2].trim(), fromQueue: false };
+        const cliKw = process.argv[2].trim();
+        if (isKeywordAlreadyPublished(cliKw)) {
+            console.warn(`[Auto-Publish] WARNING: CLI Keyword "${cliKw}" is already published! Skipping.`);
+            process.exit(0);
+        }
+        return { keyword: cliKw, fromQueue: false };
     }
 
-    // 2. Otherwise read the first keyword from keywords.txt
+    // 2. Otherwise read from keywords.txt skipping any that are already published
     const kwPath = path.join(__dirname, 'keywords.txt');
     if (fs.existsSync(kwPath)) {
-        const lines = fs.readFileSync(kwPath, 'utf8').split('\n').map(l => l.trim()).filter(Boolean);
-        if (lines.length > 0) {
-            const nextKw = lines.shift(); // take the first
+        let lines = fs.readFileSync(kwPath, 'utf8').split('\n').map(l => l.trim()).filter(Boolean);
+        while (lines.length > 0) {
+            const nextKw = lines.shift();
+            // Check if already published
+            if (isKeywordAlreadyPublished(nextKw)) {
+                console.log(`[Auto-Publish] Skipping "${nextKw}" because it is already published on the site.`);
+                fs.writeFileSync(kwPath, lines.join('\n') + '\n', 'utf8');
+                continue;
+            }
+            // Found a fresh, unpublished keyword
             fs.writeFileSync(kwPath, lines.join('\n') + '\n', 'utf8');
             return { keyword: nextKw, fromQueue: true };
         }
     }
 
-    return { keyword: "smart home gadgets", fromQueue: false };
+    console.log("[Auto-Publish] No new unpublished keywords found in keywords.txt.");
+    process.exit(0);
 }
 
 async function generateAndPublish() {
@@ -387,7 +465,8 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
     // Rebuild categories and sitemap
     require('child_process').execSync('node rebuild-categories.js');
     require('child_process').execSync('node generate-sitemap.js');
-    console.log(`[Auto-Publish] Successfully published: ${slug}.html and updated sitemap`);
+    markKeywordAsPublished(keyword, data.title, slug);
+    console.log(`[Auto-Publish] Successfully published: ${slug}.html, updated sitemap, and marked keyword as published.`);
 }
 
 async function run() {

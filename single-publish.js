@@ -13,10 +13,79 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
+// Helper to normalize strings for duplicate matching
+function normalizeText(t) {
+    return (t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function isKeywordAlreadyPublished(kw) {
+    const norm = normalizeText(kw);
+    if (!norm) return true;
+
+    // 1. Check published-keywords.txt if present
+    const pubPath = path.join(__dirname, 'published-keywords.txt');
+    if (fs.existsSync(pubPath)) {
+        const publishedList = fs.readFileSync(pubPath, 'utf8')
+            .split('\n')
+            .map(l => normalizeText(l))
+            .filter(Boolean);
+        if (publishedList.some(p => p === norm || norm.includes(p) || p.includes(norm))) {
+            return true;
+        }
+    }
+
+    // 2. Scan all existing HTML files on disk to prevent duplicates
+    const files = fs.readdirSync(__dirname).filter(f => f.endsWith('.html'));
+    for (const file of files) {
+        if (['index.html','contact.html','about.html','privacy-policy.html','terms-conditions.html',
+             'lifestyle.html','technology.html','travel.html','food.html','business.html','health.html',
+             'about-us.html','admin.html','advertise.html','entertainment.html','fashion.html',
+             'our-story.html','trending-news.html','blog-template.html'].includes(file) || file.startsWith('author-')) {
+            continue;
+        }
+
+        const fileSlugNorm = normalizeText(file.replace('.html', ''));
+        if (fileSlugNorm === norm || fileSlugNorm.includes(norm) || norm.includes(fileSlugNorm)) {
+            return true;
+        }
+
+        const content = fs.readFileSync(path.join(__dirname, file), 'utf8');
+        const titleMatch = content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+        if (titleMatch) {
+            const titleNorm = normalizeText(titleMatch[1]);
+            if (titleNorm.includes(norm) || norm.includes(titleNorm)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function markKeywordAsPublished(kw, title, slug) {
+    const pubPath = path.join(__dirname, 'published-keywords.txt');
+    const entriesToAdd = [kw, title, slug.replace(/-/g, ' ')].filter(Boolean);
+    let existing = [];
+    if (fs.existsSync(pubPath)) {
+        existing = fs.readFileSync(pubPath, 'utf8').split('\n').map(l => l.trim()).filter(Boolean);
+    }
+    entriesToAdd.forEach(e => {
+        if (!existing.includes(e.toLowerCase())) {
+            existing.push(e.toLowerCase());
+        }
+    });
+    fs.writeFileSync(pubPath, existing.sort().join('\n') + '\n', 'utf8');
+}
+
 async function generateSingle() {
     const keyword = process.argv[2] || "smart phone";
     const cat = "Lifestyle";
     
+    if (isKeywordAlreadyPublished(keyword)) {
+        console.warn(`[Skip] Keyword "${keyword}" is already published on the site. Skipping publication to avoid duplicate content!`);
+        process.exit(0);
+    }
+
     console.log(`Generating: ${keyword}...`);
     
     try {
@@ -347,8 +416,10 @@ SEO RULES:
         indexContent = indexContent.replace('<!-- NEW_TRENDING_ANCHOR -->', sidebarHtml);
         fs.writeFileSync('index.html', indexContent);
         require('child_process').execSync('node rebuild-categories.js');
+        require('child_process').execSync('node generate-sitemap.js');
+        markKeywordAsPublished(keyword, data.title, slug);
         
-        console.log(`   Saved ${slug}.html`);
+        console.log(`   Saved ${slug}.html and updated keywords registry`);
     } catch (e) {
         console.error("Error generating", keyword, e.message); throw e;
     }
