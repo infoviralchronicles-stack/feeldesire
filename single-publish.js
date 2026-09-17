@@ -183,7 +183,19 @@ SEO RULES:
   <header>
     <div class="container">
       <div class="header-top">
-        <a href="index.html" class="logo"><img src="logo.svg" alt="FeelDesire"></a>
+        <a href="/" class="logo"><img src="logo.svg" alt="FeelDesire" width="175" height="40"></a>
+        <div class="header-actions">
+          <div class="site-search-wrapper">
+            <form class="site-search-form" action="search.html" method="get">
+              <input type="search" name="q" class="site-search-input" placeholder="Search stories..." aria-label="Search articles" autocomplete="off">
+              <button type="submit" class="site-search-btn" aria-label="Submit search">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </button>
+            </form>
+            <div class="search-results-dropdown"></div>
+          </div>
+          <button class="mobile-menu-btn" aria-label="Toggle Navigation">&#9776;</button>
+        </div>
       </div>
     </div>
     <nav class="main-nav">
@@ -429,10 +441,11 @@ SEO RULES:
 
         fs.writeFileSync('index.html', indexContent);
         require('child_process').execSync('node rebuild-categories.js');
+        require('child_process').execSync('node generate-search-index.js');
         require('child_process').execSync('node generate-sitemap.js');
         markKeywordAsPublished(keyword, data.title, slug);
         
-        console.log(`   Saved ${slug}.html and updated keywords registry`);
+        console.log(`   Saved ${slug}.html, updated search index, and updated keywords registry`);
     } catch (e) {
         console.error("Error generating", keyword, e.message); throw e;
     }
