@@ -199,6 +199,25 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
     });
     data.htmlContent = html;
 
+    // Extract FAQs for FAQPage Schema
+    const faqItems = [];
+    const faqRegex = /<p><strong>([^<]+(?:\?|:))<\/strong><br\s*\/?>([\s\S]*?)<\/p>/gi;
+    let fm;
+    while ((fm = faqRegex.exec(data.htmlContent)) !== null) {
+        const q = fm[1].replace(/[:?]+$/, '').trim() + '?';
+        const a = fm[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        if (q.length > 5 && a.length > 10) faqItems.push({ q, a });
+    }
+    const faqJsonLd = faqItems.length >= 3 ? `\n  <script type="application/ld+json">\n${JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqItems.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a }
+      }))
+    }, null, 2)}\n  </script>` : '';
+
     const articleHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -256,7 +275,7 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
     "@id": "https://www.feeldesire.com/${slug}"
   }
 }
-  </script>
+  </script>${faqJsonLd}
 </head>
 <body>
   <header>
@@ -486,9 +505,11 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
 
     fs.writeFileSync('index.html', indexContent);
 
-    // Rebuild categories, search index, and sitemap
+    // Rebuild categories, search index, author pages, llms.txt, and sitemap
     require('child_process').execSync('node rebuild-categories.js');
+    require('child_process').execSync('node sync-author-pages.js');
     require('child_process').execSync('node generate-search-index.js');
+    require('child_process').execSync('node generate-llms-txt.js');
     require('child_process').execSync('node generate-sitemap.js');
     markKeywordAsPublished(keyword, data.title, slug);
     console.log(`[Auto-Publish] Successfully published: ${slug}.html, updated search index & sitemap, and marked keyword as published.`);

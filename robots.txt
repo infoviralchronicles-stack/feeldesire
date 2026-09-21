@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.feeldesire.com/sitemap.xml
-# LLM Context
-# https://www.feeldesire.com/llms.txt
+LLM-Context: https://www.feeldesire.com/llms.txt
