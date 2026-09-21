@@ -149,11 +149,26 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
 9. Do NOT include an H1 tag inside htmlContent (H1 is rendered by the template).
 10. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean natural spacing.`;
 
-    const response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: prompt,
-        config: { responseMimeType: "application/json" }
-    });
+    let response;
+    const candidateModels = ['gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-3.6-flash'];
+    let lastErr;
+    for (const mod of candidateModels) {
+        try {
+            console.log(`[Auto-Publish] Trying model "${mod}"...`);
+            response = await ai.models.generateContent({
+                model: mod,
+                contents: prompt,
+                config: { responseMimeType: "application/json" }
+            });
+            if (response && response.text) break;
+        } catch (err) {
+            console.warn(`[Auto-Publish] Model "${mod}" failed: ${err.message}`);
+            lastErr = err;
+        }
+    }
+    if (!response || !response.text) {
+        throw lastErr || new Error("Failed to generate content with all candidate models.");
+    }
 
     let text = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
     const data = JSON.parse(text);
