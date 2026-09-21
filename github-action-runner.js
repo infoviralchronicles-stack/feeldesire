@@ -177,9 +177,9 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const authorList = [
-      { name: "Emma Collins", slug: "author-emma-collins.html", role: "Senior Lifestyle & Architecture Editor", bio: "Emma Collins specializes in intentional living, interior ergonomics, circadian wellness, and sustainable home design.", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
-      { name: "David Thorne", slug: "author-david-thorne.html", role: "Senior Technology & Digital Infrastructure Lead", bio: "David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
-      { name: "Alex Mercer", slug: "author-alex-mercer.html", role: "Culture & Entertainment Correspondent", bio: "Alex Mercer covers cinematic milestones, streaming industry economics, digital culture movements, and modern creative arts.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" }
+      { name: "Emma Collins", slug: "author-emma-collins", role: "Senior Lifestyle & Architecture Editor", bio: "Emma Collins specializes in intentional living, interior ergonomics, circadian wellness, and sustainable home design.", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
+      { name: "David Thorne", slug: "author-david-thorne", role: "Senior Technology & Digital Infrastructure Lead", bio: "David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
+      { name: "Alex Mercer", slug: "author-alex-mercer", role: "Culture & Entertainment Correspondent", bio: "Alex Mercer covers cinematic milestones, streaming industry economics, digital culture movements, and modern creative arts.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" }
     ];
     const assignedAuthor = authorList[Math.floor(Math.random() * authorList.length)];
 
@@ -211,7 +211,7 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
   <link rel="preload" as="image" href="${imageUrl}" fetchpriority="high">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.min.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <meta name="description" content="${data.excerpt.replace(/"/g, '&quot;')}">
@@ -386,7 +386,7 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
       </div>
     </div>
   </footer>
-  <script src="script.js"></script>
+  <script src="script.min.js"></script>
 </body>
 </html>`;
 

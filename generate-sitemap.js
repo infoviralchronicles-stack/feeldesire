@@ -7,6 +7,7 @@ const currentDate = new Date().toISOString().split('T')[0];
 
 const excludedFiles = [
     'admin.html',
+    'search.html',
     'find-by-name-output.txt'
 ];
 
