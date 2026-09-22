@@ -1,4 +1,3 @@
-flights from la to nyc
 flights houston to orlando
 flights to orlando from dc
 new york to raleigh
