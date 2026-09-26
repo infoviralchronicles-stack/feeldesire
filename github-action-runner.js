@@ -140,7 +140,8 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 2. The article MUST be extremely comprehensive, spanning between 950 and 1050 words.
 3. You MUST write at least 8 distinct sections with descriptive H2 headings (do NOT use repetitive generic headings).
 4. Each section MUST contain at least 2 very detailed, substantive paragraphs. Expand on every single detail with real practical insights.
-5. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions" section with at least 5 distinct questions. IMPORTANT: Every single FAQ question and answer MUST be in its own separate <p> tag with the question bolded and followed by a line break, formatted exactly like: <p><strong>Question?</strong><br>Answer text goes here.</p> (Do NOT combine multiple questions into a single paragraph).
+   - FOR ACTORS / CELEBRITIES / ARTISTS: Provide genuine, deep biographical and career depth! Cover their real origin story, early breakthrough roles, signature iconic characters (with real movie/show/stage titles), acting philosophy, awards, life challenges, and cultural legacy. Do NOT write vague generic filler or random analogies — dive straight into their real filmography, theatre work, and what made them unique as an artist!
+5. Include a comprehensive "Pros and Cons" section (or "Career Highlights and Industry Challenges" for people) and a detailed "Frequently Asked Questions" section with at least 5 distinct questions. IMPORTANT: Every single FAQ question and answer MUST be in its own separate <p> tag with the question bolded and followed by a line break, formatted exactly like: <p><strong>Question?</strong><br>Answer text goes here.</p> (Do NOT combine multiple questions into a single paragraph).
 
 ADDITIONAL SEO & INTERNAL LINKING RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words of the introduction, bolded (<strong>).

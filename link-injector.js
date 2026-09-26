@@ -262,6 +262,9 @@ function inferCategory(keywordOrSlug) {
     if (/fitness|workout|health|wellness|calorie|running|sleep/i.test(lower)) {
         return 'Health';
     }
+    if (/actor|actress|movie|film|cinema|celebrity|hollywood|series|streaming|theater|theatre|curry|wolfhard|smith|damon|redford|harbour|kilmer|ryder|johnson|affleck|gyllenhaal|taylor-joy/i.test(lower)) {
+        return 'Entertainment';
+    }
     return 'Lifestyle';
 }
 
@@ -282,7 +285,8 @@ function getAvailableArticles(currentSlug, targetCategory) {
         'Travel': ['Travel', 'Lifestyle'],
         'Food': ['Food', 'Health', 'Lifestyle'],
         'Health': ['Health', 'Lifestyle', 'Food'],
-        'Lifestyle': ['Lifestyle', 'Technology', 'Travel', 'Food', 'Health', 'Business']
+        'Entertainment': ['Entertainment', 'Lifestyle', 'Technology'],
+        'Lifestyle': ['Lifestyle', 'Entertainment', 'Technology', 'Travel', 'Food', 'Health', 'Business']
     };
 
     const allowedCats = catGroup[detectedCat] || [detectedCat, 'Lifestyle'];
