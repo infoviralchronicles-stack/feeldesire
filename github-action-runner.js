@@ -140,7 +140,7 @@ IMPORTANT CONTENT RULES (CRITICAL FOR WORD COUNT):
 2. The article MUST be extremely comprehensive, spanning between 950 and 1050 words.
 3. You MUST write at least 8 distinct sections with descriptive H2 headings (do NOT use repetitive generic headings).
 4. Each section MUST contain at least 2 very detailed, substantive paragraphs. Expand on every single detail with real practical insights.
-5. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions (FAQ)" section with at least 5 questions (keep answers crisp: 1 to 2 sentences maximum).
+5. Include a comprehensive "Pros and Cons" section and a detailed "Frequently Asked Questions" section with at least 5 distinct questions. IMPORTANT: Every single FAQ question and answer MUST be in its own separate <p> tag with the question bolded and followed by a line break, formatted exactly like: <p><strong>Question?</strong><br>Answer text goes here.</p> (Do NOT combine multiple questions into a single paragraph).
 
 ADDITIONAL SEO & INTERNAL LINKING RULES:
 6. Use the exact keyword '${keyword}' in the first 50 words of the introduction, bolded (<strong>).
@@ -212,6 +212,26 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
         if (pCount === 5) imgAppend = '\n<img src="' + inlineImg2 + '" style="width:100%; border-radius:12px; margin: 30px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" alt="' + keyword + '">';
         return match + imgAppend;
     });
+
+    // Format FAQ section to ensure every Question and Answer is cleanly separated into its own paragraph
+    const rawFaqRegex = /<h2>Frequently Asked Questions<\/h2><p>([\s\S]*?)<\/p>/i;
+    const faqClusterMatch = html.match(rawFaqRegex);
+    if (faqClusterMatch) {
+        const clusterContent = faqClusterMatch[1];
+        const qRegex = /<strong>([^<]+)<\/strong>\s*([\s\S]*?)(?=(?:<strong>|$))/g;
+        const formattedPairs = [];
+        let qm;
+        while ((qm = qRegex.exec(clusterContent)) !== null) {
+            const question = qm[1].trim();
+            const answer = qm[2].trim();
+            if (question && answer) {
+                formattedPairs.push('<p><strong>' + question + '</strong><br>' + answer + '</p>');
+            }
+        }
+        if (formattedPairs.length > 0) {
+            html = html.replace(rawFaqRegex, '<h2>Frequently Asked Questions</h2>\n' + formattedPairs.join('\n'));
+        }
+    }
     data.htmlContent = html;
 
     // Extract FAQs for FAQPage Schema
