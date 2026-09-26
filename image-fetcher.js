@@ -32,14 +32,27 @@ async function fetchUniqueRelevantImages(keyword, category, baseDir = __dirname)
     const tokens = keyword.toLowerCase().split(/[\s,-]+/).filter(w => w && !stopWords.has(w));
     
     // Ordered candidate search queries
-    const searchQueries = [
-        tokens.join(' '),
-        keyword,
-        tokens.slice(0, 3).join(' '),
-        tokens.slice(-2).join(' '),
-        tokens[0] ? `${tokens[0]} ${category}` : '',
-        tokens[tokens.length - 1] ? `${tokens[tokens.length - 1]} ${category}` : ''
-    ].filter(Boolean);
+    let searchQueries = [];
+    if (category && category.toLowerCase() === 'entertainment') {
+        // For celebrities and entertainment, search specifically for actor, red carpet, cinema, and theater to avoid word-confusion (e.g. Tim Curry matching food curry)
+        searchQueries = [
+            `${keyword} actor`,
+            `${keyword} red carpet`,
+            `${keyword} cinema`,
+            'theater stage actor spotlight dramatic',
+            'hollywood film projector',
+            'cinema movie premiere red carpet'
+        ];
+    } else {
+        searchQueries = [
+            tokens.join(' '),
+            keyword,
+            tokens.slice(0, 3).join(' '),
+            tokens.slice(-2).join(' '),
+            tokens[0] ? `${tokens[0]} ${category}` : '',
+            tokens[tokens.length - 1] ? `${tokens[tokens.length - 1]} ${category}` : ''
+        ].filter(Boolean);
+    }
 
     let collected = [];
 
@@ -59,7 +72,17 @@ async function fetchUniqueRelevantImages(keyword, category, baseDir = __dirname)
 
                         // Strict relevance check: verify photo description/alt mentions at least one keyword token or category
                         const photoDesc = ((photo.alt_description || '') + ' ' + (photo.description || '')).toLowerCase();
-                        const isRelevant = tokens.some(t => photoDesc.includes(t)) || (category && photoDesc.includes(category.toLowerCase()));
+                        
+                        // Prevent food confusion (e.g. curry dish, food plate, meal) if category is Entertainment
+                        if (category && category.toLowerCase() === 'entertainment') {
+                            if (/food|dish|curry|recipe|meal|soup|sauce|plate|bowl|cooking|restaurant|spices/i.test(photoDesc)) {
+                                continue;
+                            }
+                        }
+
+                        const isRelevant = tokens.some(t => photoDesc.includes(t)) || 
+                                           (category && photoDesc.includes(category.toLowerCase())) ||
+                                           (category && category.toLowerCase() === 'entertainment' && /actor|movie|film|cinema|theater|theatre|stage|carpet|premiere/i.test(photoDesc));
 
                         if (isRelevant && !usedImages.has(base) && !collected.some(c => c.split('?')[0] === base)) {
                             collected.push(rawUrl);
