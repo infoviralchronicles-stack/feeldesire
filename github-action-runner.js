@@ -197,7 +197,14 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
       { name: "David Thorne", slug: "author-david-thorne", role: "Senior Technology & Digital Infrastructure Lead", bio: "David Thorne has spent over a decade reporting on consumer hardware, artificial intelligence architectures, quantum systems, and modern smart ecosystems.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" },
       { name: "Alex Mercer", slug: "author-alex-mercer", role: "Culture & Entertainment Correspondent", bio: "Alex Mercer covers cinematic milestones, streaming industry economics, digital culture movements, and modern creative arts.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&w=400&h=400&q=80" }
     ];
-    const assignedAuthor = authorList[Math.floor(Math.random() * authorList.length)];
+    let assignedAuthor = authorList[Math.floor(Math.random() * authorList.length)];
+    if (data.category && (data.category.toLowerCase() === 'entertainment' || data.category.toLowerCase() === 'trending news')) {
+      assignedAuthor = authorList.find(a => a.name === "Alex Mercer") || assignedAuthor;
+    } else if (data.category && data.category.toLowerCase() === 'technology') {
+      assignedAuthor = authorList.find(a => a.name === "David Thorne") || assignedAuthor;
+    } else if (data.category && (data.category.toLowerCase() === 'lifestyle' || data.category.toLowerCase() === 'travel')) {
+      assignedAuthor = authorList.find(a => a.name === "Emma Collins") || assignedAuthor;
+    }
 
     let html = data.htmlContent;
     
