@@ -184,10 +184,27 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
         return prefix + cleanText + suffix;
     });
 
+    const kwSlug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    let imageUrl;
+    let inlineImg1;
+    let inlineImg2;
+
+    const localImgPath = path.join(__dirname, 'images', `${kwSlug}.jpg`);
+    const localPngPath = path.join(__dirname, 'images', `${kwSlug}.png`);
+    if (fs.existsSync(localImgPath)) {
+        imageUrl = `images/${kwSlug}.jpg`;
+        console.log(`[Auto-Publish] Using verified local image: ${imageUrl}`);
+    } else if (fs.existsSync(localPngPath)) {
+        imageUrl = `images/${kwSlug}.png`;
+        console.log(`[Auto-Publish] Using verified local image: ${imageUrl}`);
+    }
+
     const fetchedImgs = await fetchUniqueRelevantImages(keyword, data.category, __dirname);
-    const imageUrl = fetchedImgs.featured;
-    const inlineImg1 = fetchedImgs.inline1;
-    const inlineImg2 = fetchedImgs.inline2;
+    if (!imageUrl) {
+        imageUrl = fetchedImgs.featured;
+    }
+    inlineImg1 = fetchedImgs.inline1;
+    inlineImg2 = fetchedImgs.inline2;
 
     const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
