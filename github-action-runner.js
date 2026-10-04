@@ -151,7 +151,14 @@ ADDITIONAL SEO & INTERNAL LINKING RULES:
 10. Avoid hyphenated words (e.g. write "high refresh rate" instead of "High-refresh-rate", "real time" instead of "real-time", "high quality" instead of "high-quality"). Use clean natural spacing.`;
 
     let response;
-    const candidateModels = ['gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-3.6-flash'];
+    const candidateModels = [
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+        'gemini-2.5-pro',
+        'gemini-3.5-flash',
+        'gemini-3.1-flash-lite',
+        'gemini-3.6-flash'
+    ];
     let lastErr;
     for (const mod of candidateModels) {
         try {

@@ -31,26 +31,38 @@ async function fetchUniqueRelevantImages(keyword, category, baseDir = __dirname)
     const stopWords = new Set(['to', 'from', 'in', 'on', 'for', 'of', 'and', 'the', 'a', 'an', 'with', 'how', 'what', 'best', 'top', 'buy', 'guide', 'ultimate', 'your', 'need', 'perfect', 'choosing']);
     const tokens = keyword.toLowerCase().split(/[\s,-]+/).filter(w => w && !stopWords.has(w));
     
+    const cleanKeyword = keyword.replace(/\.(co\.uk|com|org|net|io|uk)/gi, '').trim();
+    const cleanTokens = cleanKeyword.toLowerCase().split(/[\s,-]+/).filter(w => w && !stopWords.has(w));
+    
     // Ordered candidate search queries
     let searchQueries = [];
     if (category && category.toLowerCase() === 'entertainment') {
         // For celebrities and entertainment, search specifically for actor, red carpet, cinema, and theater to avoid word-confusion (e.g. Tim Curry matching food curry)
         searchQueries = [
-            `${keyword} actor`,
-            `${keyword} red carpet`,
-            `${keyword} cinema`,
+            `${cleanKeyword} actor`,
+            `${cleanKeyword} red carpet`,
+            `${cleanKeyword} cinema`,
             'theater stage actor spotlight dramatic',
             'hollywood film projector',
             'cinema movie premiere red carpet'
         ];
+    } else if (category && (category.toLowerCase() === 'business' || category.toLowerCase() === 'technology' || keyword.includes('.'))) {
+        searchQueries = [
+            `${cleanKeyword} business`,
+            `${cleanKeyword} workspace`,
+            'modern digital office workspace laptop',
+            'business strategy analysis corporate desk',
+            'entrepreneur working modern office',
+            'digital media publishing strategy'
+        ];
     } else {
         searchQueries = [
-            tokens.join(' '),
-            keyword,
-            tokens.slice(0, 3).join(' '),
-            tokens.slice(-2).join(' '),
-            tokens[0] ? `${tokens[0]} ${category}` : '',
-            tokens[tokens.length - 1] ? `${tokens[tokens.length - 1]} ${category}` : ''
+            cleanTokens.join(' '),
+            cleanKeyword,
+            cleanTokens.slice(0, 3).join(' '),
+            cleanTokens.slice(-2).join(' '),
+            cleanTokens[0] ? `${cleanTokens[0]} ${category}` : '',
+            cleanTokens[cleanTokens.length - 1] ? `${cleanTokens[cleanTokens.length - 1]} ${category}` : ''
         ].filter(Boolean);
     }
 
