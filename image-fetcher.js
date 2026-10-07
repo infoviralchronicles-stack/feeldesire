@@ -37,14 +37,13 @@ async function fetchUniqueRelevantImages(keyword, category, baseDir = __dirname)
     // Ordered candidate search queries
     let searchQueries = [];
     if (category && category.toLowerCase() === 'entertainment') {
-        // For celebrities and entertainment, search specifically for actor, red carpet, cinema, and theater to avoid word-confusion (e.g. Tim Curry matching food curry)
+        // For celebrities and entertainment, search specifically for the person's name with actor, portrait, or red carpet
         searchQueries = [
+            cleanKeyword,
+            `${cleanKeyword} portrait`,
             `${cleanKeyword} actor`,
             `${cleanKeyword} red carpet`,
-            `${cleanKeyword} cinema`,
-            'theater stage actor spotlight dramatic',
-            'hollywood film projector',
-            'cinema movie premiere red carpet'
+            `${cleanKeyword} premiere`
         ];
     } else if (category && (category.toLowerCase() === 'business' || category.toLowerCase() === 'technology' || keyword.includes('.'))) {
         searchQueries = [
@@ -93,8 +92,7 @@ async function fetchUniqueRelevantImages(keyword, category, baseDir = __dirname)
                         }
 
                         const isRelevant = tokens.some(t => photoDesc.includes(t)) || 
-                                           (category && photoDesc.includes(category.toLowerCase())) ||
-                                           (category && category.toLowerCase() === 'entertainment' && /actor|movie|film|cinema|theater|theatre|stage|carpet|premiere/i.test(photoDesc));
+                                           (category && photoDesc.includes(category.toLowerCase()));
 
                         if (isRelevant && !usedImages.has(base) && !collected.some(c => c.split('?')[0] === base)) {
                             collected.push(rawUrl);
