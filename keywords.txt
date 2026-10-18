@@ -1,4 +1,3 @@
-fly new york to charleston
 fly rdu to nyc
 nyc to charleston flights
 plane tickets lax to chicago
