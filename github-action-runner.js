@@ -126,8 +126,15 @@ async function generateAndPublish() {
 
     const prompt = `You are an elite SEO editorial director for a premier magazine. Write a massive, highly engaging, and 100% SEO-optimized article targeting the keyword "${keyword}".
 Return ONLY a valid JSON object (no markdown formatting) with these keys:
-{"title": "Catchy, high-CTR, natural SEO title containing the exact keyword \"${keyword}\"", "category": "Travel", "excerpt": "1 compelling sentence SEO meta description (under 160 characters)", "htmlContent": "HTML body without html/body tags."}
-Choose the most relevant category from: Travel, Lifestyle, Technology, Health, Business, Entertainment, Fashion, Food, Trending News.
+{"title": "Catchy, high-CTR, natural SEO title containing the exact keyword \"${keyword}\"", "category": "Entertainment", "excerpt": "1 compelling sentence SEO meta description (under 160 characters)", "htmlContent": "HTML body without html/body tags."}
+Choose the most accurate category from: Entertainment, Trending News, Business, Technology, Lifestyle, Health, Travel, Food, Fashion.
+
+CRITICAL TOPIC ACCURACY & ZERO HALLUCINATIONS:
+- FIRST, identify WHO or WHAT "${keyword}" actually is in the real world:
+  * If "${keyword}" is a real person, celebrity, actor, broadcast journalist, TV presenter, sports figure, public personality, or corporate executive: DO NOT invent a travel, tech, or random generic scenario! You MUST write an accurate biographical and career profile detailing their real background, notable roles/work, network/organizations (e.g. BBC, ITV, Netflix, Hollywood, etc.), career achievements, and impact.
+  * If "${keyword}" is a software, app, or website: write an in-depth review/analysis of what it actually does.
+  * If "${keyword}" is a travel destination or airline route: write a travel guide.
+  * Always match the article subject directly with the real-world entity.
 
 CRITICAL TITLE & SEO RULES:
 1. TITLE DIVERSITY & QUALITY:

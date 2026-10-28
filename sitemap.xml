@@ -367,12 +367,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.feeldesire.com/how-kelly-foran-is-transforming-modern-travel-storytelling</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.feeldesire.com/how-linkrify-is-transforming-modern-travel-logistics-today</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -447,6 +441,12 @@
   <url>
     <loc>https://www.feeldesire.com/kate-connelly-the-untold-story-of-a-multitalented-professional</loc>
     <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.feeldesire.com/kelly-foran-inside-the-career-of-the-uk-broadcast-journalist</loc>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
