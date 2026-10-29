@@ -1,9 +1,8 @@
-name: FeelDesire Automated Daily Publisher
+name: FeelDesire Automated Daily Publisher (Paused)
 
 on:
-  schedule:
-    # Runs 3 times daily: 10:00 AM, 3:00 PM, and 8:00 PM PKT (UTC+5: 05:00, 10:00, 15:00 UTC)
-    - cron: '0 5,10,15 * * *'
+  # schedule:
+  #   - cron: '0 5,10,15 * * *' # PAUSED: Automatic publishing disabled. Articles are now published manually.
   workflow_dispatch:
     inputs:
       keyword:
